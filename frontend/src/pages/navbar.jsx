@@ -11,20 +11,19 @@ const Navbar = () => {
   return (
     <HeaderContainer>
       <Logo>
-        <span>Dono</span>
-        <span>rity</span>
+        <span>Onco</span>
+        <span>Feliz</span>
       </Logo>
       <Nav>
-        <NavItem active>Home</NavItem>
-        <NavItem>About</NavItem>
-        <NavItem>Pages</NavItem>
-        <NavItem>Causes</NavItem>
-        <NavItem>Shop</NavItem>
+        <NavItem active>Inicio</NavItem>
         <NavItem>Blog</NavItem>
-        <NavItem>Contact</NavItem>
+        <NavItem>Casos</NavItem>
+        <NavItem>Eventos</NavItem>
+        <NavItem>Campañas</NavItem>
+        <NavItem>Contacto</NavItem>
       </Nav>
       <ContributeButton>
-        <span>❤️</span> Contribute
+        <span>❤️</span> Donar
       </ContributeButton>
     </HeaderContainer>
   );

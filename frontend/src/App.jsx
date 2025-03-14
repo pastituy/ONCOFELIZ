@@ -2,6 +2,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Login from './pages/login'
 import Register from './pages/register'
 import Navbar from './pages/navbar'
+import HeroSection from './pages/heroSection';
+import { ThemeProvider } from 'styled-components';
+import BlogSection from './pages/sectionBlog';
 const theme = {
   colors: {
     primary: '#FF6347', // Coral color similar a la imagen
@@ -24,18 +27,11 @@ const theme = {
 function App() {
   return (
     <ThemeProvider theme={theme}>
-    <GlobalStyle />
     <Navbar />
     <HeroSection />
-  
+    <BlogSection/>
   </ThemeProvider>
-    {/* <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<Navbar />} >
-        </Route>
-          <Route path="/register" element={<Register />} />
-      </Routes>
-    </BrowserRouter> */}
+    
   )
 }
 
