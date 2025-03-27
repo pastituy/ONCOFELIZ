@@ -7,7 +7,7 @@ import {
   SubHeading, 
   DonateButton,
   ImageWrapper
-} from '../styles/styleHeroSection';
+} from '../../styles/styleHeroSection';
 
 const HeroSection = () => {
   return (
@@ -23,7 +23,6 @@ const HeroSection = () => {
         <DonateButton>Donar ahora</DonateButton>
       </ContentWrapper>
       <ImageWrapper>
-        
       </ImageWrapper>
     </HeroContainer>
   );

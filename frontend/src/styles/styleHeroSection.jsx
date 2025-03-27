@@ -13,7 +13,7 @@ export const HeroContainer = styled.section`
     top: 0;
     right: 0;
     height: 100%;
-    width: 50%;
+    width: 30%;
     background-color: ${props => props.theme.colors.dark};
     border-radius: 0 0 0 150px;
     z-index: 1;

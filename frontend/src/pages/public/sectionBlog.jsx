@@ -1,4 +1,3 @@
-// components/BlogSection/index.js
 import React from 'react';
 import { 
   BlogSectionContainer, 
@@ -12,26 +11,23 @@ import {
   ReadMoreButton,
   TitleAccent,
   BlogHeader
-} from '../styles/styleSectionBlog';
+} from '../../styles/styleSectionBlog';
 
 const BlogSection = () => {
   const blogPosts = [
     {
-        id: 1,
         title: "Milagros de Esperanza: Niños que Vencieron al Cáncer",
         excerpt: "Conoce las historias inspiradoras de niños que superaron el cáncer gracias a tratamientos innovadores y tu apoyo.",
         date: "Mar 10, 2025",
         image: "https://www.gofundme.com/es-es/c/wp-content/uploads/sites/3/2019/10/young-girl-with-cancer-posing-with-doll.jpg?w=600v" 
       },
       {
-        id: 2,
         title: "Avances en Tratamientos Pediátricos",
         excerpt: "Gracias a las donaciones, hemos logrado implementar terapias avanzadas que aumentan las tasas de recuperación en un 40%.",
         date: "Mar 5, 2025",
         image: "https://th.bing.com/th/id/R.96217a91759fc7bc83bc6507f386c506?rik=4MwAIBz5gxk69Q&pid=ImgRaw&r=0" 
       },
       {
-        id: 3,
         title: "Voluntarios que Cambian Vidas",
         excerpt: "Conoce a Juan, un voluntario que ha ayudado a más de 20 familias durante el tratamiento de sus hijos contra el cáncer.",
         date: "Feb 28, 2025",
@@ -45,8 +41,8 @@ const BlogSection = () => {
         <SectionTitle>Ultimas <TitleAccent>noticias</TitleAccent> & Historias</SectionTitle>
       </BlogHeader>
       <BlogGrid>
-        {blogPosts.map(post => (
-          <BlogCard key={post.id}>
+        {blogPosts.map((post,i) => (
+          <BlogCard key={i}>
             <BlogImage imageUrl={post.image}>
               <BlogDate>{post.date}</BlogDate>
             </BlogImage>

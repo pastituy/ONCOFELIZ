@@ -5,7 +5,7 @@ import {
   Logo,
   Nav,
   NavItem,
-} from "../styles/styleNav";
+} from "../../styles/styleNav";
 
 const Navbar = () => {
   return (
