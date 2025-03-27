@@ -14,17 +14,112 @@ datasource db {
 }
 
 model Usuario {
-  id       Int      @id @default(autoincrement())
-  nombre   String
-  email    String   @unique
-  creadoEn DateTime @default(now())
+  id             Int              @id @default(autoincrement())
+  nombre         String
+  email          String           @unique
+  telefono       String
+  pais           String
+  creadoEn       DateTime         @default(now())
+  ci             String?
+  rol            String? //donante o voluntario(voluntario puede agregar eventos, campana y blog y responder blog)
+  usuarioCompana UsuarioCompana[]
+}
+
+model Donaciones {
+  id            Int      @id @default(autoincrement())
+  nombreDonante String
+  cantidad      String
+  metodoPago    String
+  fecha         DateTime @default(now())
+}
+
+model Padre {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  apellido  String
+  telefono  String
+  ci        String
+  ubicacion String
+  paciente  Paciente[]
+}
+
+model Paciente {
+  id            Int      @id @default(autoincrement())
+  nombre        String
+  apellido      String
+  ciudad        String
+  tipoCancer    String //manejar por le frontend los casos
+  edad          Int
+  idPadre       Int
+  padre         Padre    @relation(fields: [idPadre], references: [id])
+  fechaRegistro DateTime @default(now())
+}
+
+model Tratamiento {
+  id              Int      @id @default(autoincrement())
+  tipoTratamiento String
+  descripcion     String
+  idPaciente      Int
+  estado          Boolean //si esta activo o no 
+  fecha           DateTime @default(now())
+  siguienteCita   DateTime
+}
+
+model Evento {
+  id          Int    @id @default(autoincrement())
+  titulo      String
+  descripcion String
+  fecha       String
+  img         String
+  ubicacion   String
+}
+
+model Campana {
+  id             Int              @id @default(autoincrement())
+  titulo         String
+  descripcion    String
+  fecha          String
+  multimedia     String //imagenes o videos aqui
+  usuarioCompana UsuarioCompana[]
+}
+
+model UsuarioCompana {
+  id               Int      @id @default(autoincrement())
+  idUsuario        Int?
+  nombreUsuario    String?
+  montoSuscripcion Int
+  idCompana        Int
+  fecha            DateTime @default(now())
+  Campana          Campana  @relation(fields: [idCompana], references: [id])
+  Usuario          Usuario? @relation(fields: [idUsuario], references: [id])
+}
+
+model Categoria {
+  id     Int    @id @default(autoincrement())
+  nombre String //proceso niños, recuperacion niños, informacion basica beneficiarion, casos del niño
+  blog   Blog[]
 }
 
 model Blog {
-  id          Int      @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   titulo      String
   descripcion String
-  foto        String
-  enlace      String
-  creadoEn    DateTime @default(now())
+  idCategoria Int
+  Categoria   Categoria     @relation(fields: [idCategoria], references: [id])
+  comentarios Comentarios[]
+}
+
+model Comentarios {
+  id         Int         @id @default(autoincrement())
+  comentario String
+  idBlog     Int
+  blog       Blog        @relation(fields: [idBlog], references: [id])
+  respuesta  respuesta[]
+}
+
+model respuesta {
+  id           Int         @id @default(autoincrement())
+  respuesta    String
+  idComentario Int
+  comentario   Comentarios @relation(fields: [idComentario], references: [id])
 }
