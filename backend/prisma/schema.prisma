@@ -19,6 +19,7 @@ model Usuario {
   email          String           @unique
   telefono       String
   pais           String
+  password       String
   creadoEn       DateTime         @default(now())
   ci             String?
   rol            String? //donante o voluntario(voluntario puede agregar eventos, campana y blog y responder blog)

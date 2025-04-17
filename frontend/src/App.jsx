@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Login from "./pages/public/login";
 import Register from "./pages/public/register";
 import Navbar from "./pages/public/navbar";
@@ -11,6 +12,8 @@ import Campanas from "./pages/public/campanas";
 import Contact from "./pages/public/contact";
 import Footer from "./pages/public/footer";
 import Layout from "./pages/public/layout";
+import { UserProvider } from "./context/userContext";
+import Sidebar from "./components/sidebar";
 const theme = {
   colors: {
     primary: "#FF6347", // Coral color similar a la imagen
@@ -32,16 +35,26 @@ const theme = {
 };
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <Navbar />
-      <HeroSection/>
-      <BlogSection/>
-      <Eventos/>
-      <CasosRecuperados/>
-      <Campanas/>
-      <Contact/>
-      <Footer/>
-    </ThemeProvider>
+    <UserProvider>
+      <ThemeProvider theme={theme}>
+        {/* <Navbar />
+      <HeroSection />
+      <BlogSection />
+      <Eventos />
+      <CasosRecuperados />
+      <Campanas />
+      <Contact />
+      <Footer /> */}
+        <Toaster position="bottom-right" reverseOrder={true} />
+
+        <BrowserRouter>
+          <Routes>
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
+    </UserProvider>
   );
 }
 

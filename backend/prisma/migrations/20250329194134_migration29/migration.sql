@@ -5,6 +5,7 @@ CREATE TABLE "Usuario" (
     "email" TEXT NOT NULL,
     "telefono" TEXT NOT NULL,
     "pais" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
     "creadoEn" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "ci" TEXT,
     "rol" TEXT,

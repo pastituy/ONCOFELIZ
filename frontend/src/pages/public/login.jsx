@@ -1,24 +1,51 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React, { useState } from "react";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useUser } from "../../context/userContext";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  
+  const { login } = useUser();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const handleRegisterClick = (e) => {
     e.preventDefault();
+    navigate("/register");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Iniciar sesión', { email, password });
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      console.log(data)
+      if (!response.ok) {
+        toast.error(data.mensaje || "Error al iniciar sesion");
+        return;
+      }
+      login(data.data, data.token);
+      toast.success("Inicio de sesion exitoso");
+      navigate("/dasboard");
+    } catch (error) {
+      toast.error("Hubo un problema al iniciar sesion");
+    }
   };
 
   return (
     <Container>
       <LoginCard>
         <LoginContent>
-          <SectionTitle>Iniciar <TitleAccent>Sesión</TitleAccent></SectionTitle>
+          <SectionTitle>
+            Iniciar <TitleAccent>Sesión</TitleAccent>
+          </SectionTitle>
           <Subtitle>Event Manager</Subtitle>
 
           <Form onSubmit={handleSubmit}>
@@ -48,9 +75,7 @@ const Login = () => {
               ¿Olvidaste tu contraseña?
             </ForgotPasswordLink>
 
-            <LoginButton type="submit">
-              Iniciar sesión
-            </LoginButton>
+            <LoginButton type="submit">Iniciar sesión</LoginButton>
 
             <SignUpSection>
               <SignUpText>¿No tienes una cuenta?</SignUpText>
@@ -74,7 +99,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   background-color: #f4f7f6;
-  padding: 4rem 5%;
+  padding: 2rem 5%;
 `;
 
 const LoginCard = styled.div`
@@ -91,7 +116,7 @@ const LoginContent = styled.div`
 `;
 
 const SectionTitle = styled.h2`
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
   font-size: 2.5rem;
   font-weight: 700;
   position: relative;
@@ -99,21 +124,21 @@ const SectionTitle = styled.h2`
   margin-bottom: 1rem;
   text-align: center;
   width: 100%;
-  
+
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -15px;
     left: 50%;
     transform: translateX(-50%);
     width: 70px;
     height: 3px;
-    background-color: ${props => props.theme?.colors?.primary || '#FF6347'};
+    background-color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
   }
 `;
 
 const TitleAccent = styled.span`
-  color: ${props => props.theme?.colors?.primary || '#FF6347'};
+  color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
 `;
 
 const Subtitle = styled.p`
@@ -151,16 +176,16 @@ const FormInput = styled.input`
 
   &:focus {
     outline: none;
-    border-color: ${props => props.theme?.colors?.primary || '#FF6347'};
+    border-color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
   }
 `;
 
 const ForgotPasswordLink = styled.a`
   text-align: right;
-  color: ${props => props.theme?.colors?.primary || '#FF6347'};
+  color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
   text-decoration: none;
   font-size: 0.9rem;
-  
+
   &:hover {
     text-decoration: underline;
   }
@@ -169,7 +194,7 @@ const ForgotPasswordLink = styled.a`
 const LoginButton = styled.button`
   width: 100%;
   padding: 0.75rem 1rem;
-  background-color: ${props => props.theme?.colors?.primary || '#FF6347'};
+  background-color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
   color: white;
   border: none;
   border-radius: 6px;
@@ -194,11 +219,11 @@ const SignUpText = styled.span`
 `;
 
 const SignUpLink = styled.a`
-  color: ${props => props.theme?.colors?.primary || '#FF6347'};
+  color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
   text-decoration: none;
   margin-left: 0.25rem;
   font-weight: 500;
-  
+
   &:hover {
     text-decoration: underline;
   }
