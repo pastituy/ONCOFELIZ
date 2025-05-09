@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   ContactPageContainer, 
   ContactSection, 
@@ -14,15 +14,74 @@ import {
   FormTextarea,
   SubmitButton
 } from '../../styles/styleContact';
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [status, setStatus] = useState({
+    submitted: false,
+    submitting: false,
+    info: { error: false, msg: null }
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert('Mensaje enviado');
+    setStatus({
+      submitted: false,
+      submitting: true,
+      info: { error: false, msg: null }
+    });
+
+    const templateParams = {
+      to_email: 'cbbe.jhoselindiana.cespedes.br@unifranz.edu.bo',
+      from_name: formData.name,
+      from_email: formData.email,
+      message: formData.message
+    };
+
+    emailjs.send(
+      'service_4r6v9q8', 
+      'template_7g9m2hf', 
+      templateParams, 
+      '_cnU6ZlAn1PGWXuXV'
+    )
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
+        setStatus({
+          submitted: true,
+          submitting: false,
+          info: { error: false, msg: 'Mensaje enviado correctamente!' }
+        });
+        setFormData({
+          name: '',
+          email: '',
+          message: ''
+        });
+      })
+      .catch((err) => {
+        console.log('FAILED...', err);
+        setStatus({
+          submitted: false,
+          submitting: false,
+          info: { error: true, msg: 'Ocurrió un error al enviar el mensaje. Por favor, intenta de nuevo.' }
+        });
+      });
   };
 
   return (
-    <ContactPageContainer>
+    <ContactPageContainer id="contacto">
       <ContactSection>
         <ContactInfo>
           <SectionTitle>Contáctanos</SectionTitle>
@@ -57,24 +116,58 @@ const Contact = () => {
           </ContactDetail>
         </ContactInfo>
         <ContactForm onSubmit={handleSubmit}>
+          {status.info.error && (
+            <div style={{ color: 'red', marginBottom: '1rem' }}>
+              {status.info.msg}
+            </div>
+          )}
+          {status.submitted && (
+            <div style={{ color: 'green', marginBottom: '1rem' }}>
+              {status.info.msg}
+            </div>
+          )}
           <FormGroup>
             <FormLabel>Nombre</FormLabel>
-            <FormInput type="text" placeholder="Tu nombre" required />
+            <FormInput 
+              type="text" 
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              placeholder="Tu nombre" 
+              required 
+            />
           </FormGroup>
           <FormGroup>
             <FormLabel>Correo Electrónico</FormLabel>
-            <FormInput type="email" placeholder="tu@email.com" required />
+            <FormInput 
+              type="email" 
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="tu@email.com" 
+              required 
+            />
           </FormGroup>
           <FormGroup>
             <FormLabel>Mensaje</FormLabel>
-            <FormTextarea placeholder="Escribe tu mensaje aquí" required></FormTextarea>
+            <FormTextarea 
+              name="message"
+              value={formData.message}
+              onChange={handleInputChange}
+              placeholder="Escribe tu mensaje aquí" 
+              required
+            ></FormTextarea>
           </FormGroup>
-          <SubmitButton type="submit">Enviar Mensaje</SubmitButton>
+          <SubmitButton 
+            type="submit" 
+            disabled={status.submitting}
+          >
+            {status.submitting ? 'Enviando...' : 'Enviar Mensaje'}
+          </SubmitButton>
         </ContactForm>
       </ContactSection>
     </ContactPageContainer>
   );
 };
-
 
 export default Contact;

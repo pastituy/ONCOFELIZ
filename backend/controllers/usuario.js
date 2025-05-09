@@ -104,7 +104,7 @@ app.put("/usuario/:id", async (req, res) => {
       data: req.body,
     });
     res.json({
-      mensaje: "Usuario actualizado correcamente",
+      mensaje: "Usuario actualizado correctamente",
       data: usuario,
     });
   } catch (error) {

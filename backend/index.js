@@ -13,6 +13,9 @@ const categoria = require("./controllers/categoria");
 const comentarios = require("./controllers/comentarios");
 const respuesta = require("./controllers/respuesta");
 const usuarioCompana = require("./controllers/usuarioCompana");
+const login = require("./controllers/login");
+const recuperados = require("./controllers/recuperados");
+
 const app = express();
 
 app.use(express.json());
@@ -30,7 +33,8 @@ app.use(categoria);
 app.use(comentarios);
 app.use(respuesta);
 app.use(usuarioCompana);
-
+app.use(recuperados);
+app.use(login);
 app.listen(3000, () =>
   console.log("Servidor corriendo en http://localhost:3000")
 );

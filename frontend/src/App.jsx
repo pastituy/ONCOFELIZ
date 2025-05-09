@@ -2,18 +2,18 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Login from "./pages/public/login";
 import Register from "./pages/public/register";
-import Navbar from "./pages/public/navbar";
-import HeroSection from "./pages/public/heroSection";
 import { ThemeProvider } from "styled-components";
-import BlogSection from "./pages/public/sectionBlog";
-import Eventos from "./pages/public/eventos";
-import CasosRecuperados from "./pages/public/casosRecuperados";
-import Campanas from "./pages/public/campanas";
-import Contact from "./pages/public/contact";
-import Footer from "./pages/public/footer";
 import Layout from "./pages/public/layout";
 import { UserProvider } from "./context/userContext";
-import Sidebar from "./components/sidebar";
+import LayoutAdmin from "./pages/private/layout";
+import Events from "./pages/private/eventos";
+import Camp from "./pages/private/campana";
+import Noticias from "./pages/private/noticias";
+import Usuario from "./pages/private/usuario";
+import Donaciones from "./pages/private/donaciones";
+import RegistroPaciente from "./pages/private/paciente";
+import Tratamientos from "./pages/private/tratamiento";
+import Recuperados from "./pages/private/donacionesCampa";
 const theme = {
   colors: {
     primary: "#FF6347", // Coral color similar a la imagen
@@ -37,20 +37,31 @@ function App() {
   return (
     <UserProvider>
       <ThemeProvider theme={theme}>
-        {/* <Navbar />
+        {/*<Navbar />
       <HeroSection />
       <BlogSection />
       <Eventos />
       <CasosRecuperados />
       <Campanas />
       <Contact />
-      <Footer /> */}
+      <Footer />*/}
         <Toaster position="bottom-right" reverseOrder={true} />
 
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<Layout />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/dasboard" element={<LayoutAdmin />}>
+              <Route path="/dasboard/eventos" element={<Events />} />
+              <Route path="/dasboard/campana" element={<Camp />} />
+              <Route path="/dasboard/noticias" element={<Noticias />} />
+              <Route path="/dasboard/usuario" element={<Usuario />} />
+              <Route path="/dasboard/donaciones" element={<Donaciones />} />
+              <Route path="/dasboard/paciente" element={<RegistroPaciente />} />
+              <Route path="/dasboard/tratamiento" element={<Tratamientos />} />
+              <Route path="/dasboard/donaciones-campana" element={<Recuperados />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

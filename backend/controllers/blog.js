@@ -3,7 +3,7 @@ const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const app = express();
 const prisma = new PrismaClient();
-
+const formatDate = require("../utils/formatDate");
 app.get("/blog", async (req, res) => {
   try {
     const blog = await prisma.blog.findMany({});

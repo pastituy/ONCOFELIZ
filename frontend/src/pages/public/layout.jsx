@@ -3,12 +3,19 @@ import { Link, Outlet } from "react-router-dom";
 import { useState } from "react";
 import styled from "styled-components";
 import Navbar from "./navbar";
+import HeroSection from "./heroSection";
+import BlogSection from "./sectionBlog";
+import Eventos from "./eventos";
+import CasosRecuperados from "./casosRecuperados";
+import Campanas from "./campanas";
+import Contact from "./contact";
+import Footer from "./footer";
+
 const Layout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const scrollToSection = (link) => {
-    const id = link.replace("#", "");
-    const element = document.getElementById(id);
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
     if (element) {
       window.scrollTo({
         top: element.offsetTop,
@@ -17,38 +24,56 @@ const Layout = () => {
     }
     setIsMenuOpen(false);
   };
+
   const NavLinkes = [
     {
       name: "Inicio",
-      link: "#inicio",
+      link: "inicio",
     },
     {
       name: "Blog",
-      link: "#blog",
+      link: "blog",
     },
     {
       name: "Casos",
-      link: "#casos",
+      link: "casos",
     },
     {
       name: "Eventos",
-      link: "#eventos",
+      link: "eventos",
     },
     {
       name: "Compañas",
-      link: "#campanas",
+      link: "campanas",
     },
     {
       name: "Contacto",
-      link: "#contacto",
+      link: "contacto",
     },
   ];
+
   return (
     <Componentes>
-      <Navbar />
-      <DivOutles>
-        <Outlet />
-      </DivOutles>
+      <Navbar navLinks={NavLinkes} scrollToSection={scrollToSection} />
+      <div id="inicio">
+        <HeroSection />
+      </div>
+      <div id="blog">
+        <BlogSection />
+      </div>
+      <div id="eventos">
+        <Eventos />
+      </div>
+      <div id="casos">
+        <CasosRecuperados />
+      </div>
+      <div id="campanas">
+        <Campanas />
+      </div>
+      <div id="contacto">
+        <Contact />
+      </div>
+      <Footer scrollToSection={scrollToSection} />
     </Componentes>
   );
 };

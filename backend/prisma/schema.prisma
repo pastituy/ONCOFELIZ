@@ -31,6 +31,7 @@ model Donaciones {
   nombreDonante String
   cantidad      String
   metodoPago    String
+  descripcion   String?
   fecha         DateTime @default(now())
 }
 
@@ -45,25 +46,40 @@ model Padre {
 }
 
 model Paciente {
-  id            Int      @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   nombre        String
   apellido      String
   ciudad        String
   tipoCancer    String //manejar por le frontend los casos
   edad          Int
   idPadre       Int
-  padre         Padre    @relation(fields: [idPadre], references: [id])
-  fechaRegistro DateTime @default(now())
+  padre         Padre         @relation(fields: [idPadre], references: [id])
+  fechaRegistro DateTime      @default(now())
+  Recuperados   Recuperados[]
+  Tratamiento   Tratamiento[]
+}
+
+model Recuperados {
+  id         Int      @id @default(autoincrement())
+  idPaciente Int
+  paciente   Paciente @relation(fields: [idPaciente], references: [id])
+  diagnosis  String
+  image      String
+  quote      String
+  recovered  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Tratamiento {
   id              Int      @id @default(autoincrement())
   tipoTratamiento String
   descripcion     String
-  idPaciente      Int
+  idPaciente      Int?
   estado          Boolean //si esta activo o no 
   fecha           DateTime @default(now())
   siguienteCita   DateTime
+  paciente   Paciente? @relation(fields: [idPaciente], references: [id])
 }
 
 model Evento {
@@ -81,6 +97,8 @@ model Campana {
   descripcion    String
   fecha          String
   multimedia     String //imagenes o videos aqui
+  recaudado      Decimal?
+  previstro      Decimal?
   usuarioCompana UsuarioCompana[]
 }
 
@@ -103,11 +121,31 @@ model Categoria {
 
 model Blog {
   id          Int           @id @default(autoincrement())
-  titulo      String
-  descripcion String
-  idCategoria Int
-  Categoria   Categoria     @relation(fields: [idCategoria], references: [id])
+  titulo      String?
+  excerpt     String?
+  fecha       DateTime      @default(now())
+  autor       String?
+  imagen      String?
+  idCategoria Int?
+  categoria   Categoria?    @relation(fields: [idCategoria], references: [id])
+  contenidos  Contenido[]
+  tags        Tag[]
   comentarios Comentarios[]
+}
+
+model Contenido {
+  id     Int    @id @default(autoincrement())
+  titulo String
+  texto  String @db.Text
+  orden  Int
+  blogId Int
+  blog   Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id     Int    @id @default(autoincrement())
+  nombre String @unique
+  blogs  Blog[]
 }
 
 model Comentarios {

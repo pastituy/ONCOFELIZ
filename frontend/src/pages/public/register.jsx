@@ -66,7 +66,7 @@ const Register = () => {
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Las contraseñas no coinciden");
+      toast.error("Las contraseñas no coinciden");
       return;
     }
   };
