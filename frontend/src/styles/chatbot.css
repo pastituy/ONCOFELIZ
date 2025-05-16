@@ -1,0 +1,39 @@
+/* OncoFelizChatbot.css */
+.oncofeliz-chatbot-wrapper {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Estilos adicionales para la sección informativa */
+.information-section {
+  position: relative;
+  padding: 2rem;
+  background-color: #FFF9F0;
+  border-radius: 8px;
+  margin: 2rem 0;
+}
+
+/* Asegura que el botón del chatbot tenga un buen aspecto */
+df-messenger {
+  --df-messenger-button-border-radius: 50%;
+}
+
+/* Personalizaciones adicionales para una apariencia minimalista */
+df-messenger::part(launcher) {
+  bottom: 20px;
+  right: 20px;
+}
+
+/* Estilos específicos para dispositivos móviles */
+@media (max-width: 768px) {
+  df-messenger::part(chat-wrapper) {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 12px 12px 0 0;
+  }
+  
+  df-messenger::part(launcher) {
+    bottom: 10px;
+    right: 10px;
+  }
+}

@@ -19,6 +19,7 @@ app.get("/recuperados", async (req, res) => {
       image: recuperado.image,
       quote: recuperado.quote,
       recovered: recuperado.recovered,
+      idPaciente:recuperado.idPaciente,
     }));
 
     res.status(200).json(formattedData);
@@ -217,4 +218,21 @@ exports.getRecuperadoByPacienteId = async (req, res) => {
     res.status(500).json({ error: "Error al obtener el caso de recuperación" });
   }
 };
+app.delete("/recuperados/:id", async (req, res) => {
+  try {
+    await prisma.recuperados.delete({
+      where: {
+        id: Number(req.params.id),
+      },
+    });
+    res.json({
+      mensaje: "recuperado eliminado correctamente",
+    });
+  } catch (error) {
+    res.status(500).json({
+      mensaje: "Error al eliminar recuperado",
+      error: error.mensaje,
+    });
+  }
+});
 module.exports = app;

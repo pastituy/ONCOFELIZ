@@ -3,9 +3,11 @@ import Sidebar from "../../components/sidebar";
 import Nav from "../../components/nav";
 import styled from "styled-components";
 import { Outlet } from "react-router-dom";
+import OncoFelizChatbot from "../../components/chatbot";
 const LayoutAdmin = () => {
   return (
     <Container>
+      
       <Sidebar />
       <DivOutled>
         <Nav />

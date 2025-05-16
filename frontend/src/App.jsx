@@ -14,6 +14,7 @@ import Donaciones from "./pages/private/donaciones";
 import RegistroPaciente from "./pages/private/paciente";
 import Tratamientos from "./pages/private/tratamiento";
 import Recuperados from "./pages/private/donacionesCampa";
+import CancerNewsChat from "./pages/private/chat";
 const theme = {
   colors: {
     primary: "#FF6347", // Coral color similar a la imagen
@@ -60,7 +61,14 @@ function App() {
               <Route path="/dasboard/donaciones" element={<Donaciones />} />
               <Route path="/dasboard/paciente" element={<RegistroPaciente />} />
               <Route path="/dasboard/tratamiento" element={<Tratamientos />} />
-              <Route path="/dasboard/donaciones-campana" element={<Recuperados />} />
+              <Route
+                path="/dasboard/donaciones-campana"
+                element={<Recuperados />}
+              />
+              <Route
+                path="/dasboard/chat"
+                element={<CancerNewsChat />}
+              />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { IoCloseOutline } from "react-icons/io5";
 import Table from "../../../components/ui/table";
@@ -6,6 +6,8 @@ import toast from "react-hot-toast";
 
 const Pacientes = () => {
   const [showModal, setShowModal] = useState(false);
+    const isFetched = useRef(false);
+
   const [formPadre, setFormPadre] = useState({
     nombre: "",
     apellido: "",
@@ -58,8 +60,11 @@ const Pacientes = () => {
   };
 
   useEffect(() => {
+  if (!isFetched.current) {
     getData();
-  }, []);
+    isFetched.current = true;
+  }
+}, []);
 
   const resetForm = () => {
     setFormPadre({

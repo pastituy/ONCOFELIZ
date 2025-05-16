@@ -58,7 +58,6 @@ const Contact = () => {
       '_cnU6ZlAn1PGWXuXV'
     )
       .then((response) => {
-        console.log('SUCCESS!', response.status, response.text);
         setStatus({
           submitted: true,
           submitting: false,
@@ -71,7 +70,6 @@ const Contact = () => {
         });
       })
       .catch((err) => {
-        console.log('FAILED...', err);
         setStatus({
           submitted: false,
           submitting: false,

@@ -26,14 +26,13 @@ const Login = () => {
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
-      console.log(data)
       if (!response.ok) {
         toast.error(data.mensaje || "Error al iniciar sesion");
         return;
       }
       login(data.data, data.token);
       toast.success("Inicio de sesion exitoso");
-      navigate("/dasboard");
+      navigate("/dasboard/eventos");
     } catch (error) {
       toast.error("Hubo un problema al iniciar sesion");
     }

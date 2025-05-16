@@ -10,6 +10,7 @@ import CasosRecuperados from "./casosRecuperados";
 import Campanas from "./campanas";
 import Contact from "./contact";
 import Footer from "./footer";
+import OncoFelizChatbot from "../../components/chatbot";
 
 const Layout = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -54,6 +55,8 @@ const Layout = () => {
 
   return (
     <Componentes>
+{/*       <OncoFelizChatbot />
+ */}
       <Navbar navLinks={NavLinkes} scrollToSection={scrollToSection} />
       <div id="inicio">
         <HeroSection />
