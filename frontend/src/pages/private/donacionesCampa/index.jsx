@@ -11,13 +11,13 @@ const Recuperados = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [item, setItem] = useState({});
   const isFetched = useRef(false);
-  
+
   const [form, setForm] = useState({
     idPaciente: "",
     diagnosis: "",
     image: "",
     quote: "",
-    recovered: ""
+    recovered: "",
   });
   const [dataRecuperados, setDataRecuperados] = useState([]);
   const [pacientes, setPacientes] = useState([]);
@@ -29,33 +29,35 @@ const Recuperados = () => {
 
   const getData = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/recuperados');
-      console.log(response.data)
-      setDataRecuperados(response.data || []);
-      toast.success(response.mensaje || "Recuperados cargados con éxito");
+      const response = await fetch("http://localhost:3000/recuperados");
+      const data = await response.json();
+      setDataRecuperados(data);
+      if (!response.ok) {
+        toast.error(data.mensaje || "Error al obtener paciente");
+      }
+      
     } catch (error) {
-      toast.error("Hubo un problema al obtener recuperados");
+      toast.error("Hubo un problema al obtener paciente");
     }
   };
-
   const getPacientes = async () => {
     try {
       const response = await fetch("http://localhost:3000/paciente");
       const data = await response.json();
+      setPacientes(data.data);
       if (!response.ok) {
-        toast.error(data.mensaje || "Error al obtener pacientes");
-        return;
+        toast.error(data.mensaje || "Error al obtener paciente");
       }
-      setPacientes(data.data || []);
+      
     } catch (error) {
-      toast.error("Hubo un problema al obtener la lista de pacientes");
+      toast.error("Hubo un problema al obtener paciente");
     }
   };
-
   useEffect(() => {
     if (!isFetched.current) {
       getData();
       getPacientes();
+
       isFetched.current = true;
     }
   }, []);
@@ -66,7 +68,7 @@ const Recuperados = () => {
       diagnosis: "",
       image: "",
       quote: "",
-      recovered: ""
+      recovered: "",
     });
     setItem({});
   };
@@ -83,12 +85,14 @@ const Recuperados = () => {
   };
 
   const editarRecuperado = (data) => {
+    console.log("Datos a editar:", data);
+
     setForm({
       idPaciente: data.idPaciente || "",
       diagnosis: data.diagnosis || "",
       image: data.image || "",
       quote: data.quote || "",
-      recovered: data.recovered || ""
+      recovered: data.recovered || "",
     });
     setItem(data);
     setIsEditing(true);
@@ -160,7 +164,10 @@ const Recuperados = () => {
         <DateFile>
           <LoginButton onClick={openModal}>Agregar</LoginButton>
           <ButtonExcel onClick={exportToExcel}>
-            <PiMicrosoftExcelLogoFill color="#2ba84a" style={{ fontSize: "1.4rem" }} />
+            <PiMicrosoftExcelLogoFill
+              color="#2ba84a"
+              style={{ fontSize: "1.4rem" }}
+            />
             Excel
           </ButtonExcel>
           <ButtonPDF onClick={exportToPDF}>
@@ -199,7 +206,8 @@ const Recuperados = () => {
                     <option value="">Seleccione un paciente</option>
                     {pacientes.map((paciente) => (
                       <option key={paciente.id} value={paciente.id}>
-                        {paciente.nombre} {paciente.apellido} - {paciente.edad} años
+                        {paciente.nombre} {paciente.apellido} - {paciente.edad}{" "}
+                        años
                       </option>
                     ))}
                   </Select>
@@ -249,8 +257,12 @@ const Recuperados = () => {
                 </FormGroup>
 
                 <ButtonGroup>
-                  <CancelButton type="button" onClick={closeModal}>Cancelar</CancelButton>
-                  <SubmitButton type="submit">{isEditing ? "Actualizar" : "Guardar"}</SubmitButton>
+                  <CancelButton type="button" onClick={closeModal}>
+                    Cancelar
+                  </CancelButton>
+                  <SubmitButton type="submit">
+                    {isEditing ? "Actualizar" : "Guardar"}
+                  </SubmitButton>
                 </ButtonGroup>
               </Form>
             </ModalContent>
@@ -418,7 +430,6 @@ const Form = styled.form`
 const FormGroup = styled.div`
   margin-bottom: 15px;
 `;
-
 
 const Label = styled.label`
   display: block;

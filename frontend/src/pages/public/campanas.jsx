@@ -36,7 +36,6 @@ const Campanas = () => {
         }
         
         const data = await response.json();
-        console.log("Datos originales:", data);
         
         // Verifica si es un array directamente o si tiene una propiedad data
         const campañasData = Array.isArray(data) ? data : (data.data || []);
@@ -73,7 +72,6 @@ const Campanas = () => {
                   fechaCampaña = new Date();
                 }
               } catch (e) {
-                console.error(`Error al procesar fecha ${campaña.fecha}:`, e);
                 fechaCampaña = new Date();
               }
               
@@ -86,14 +84,11 @@ const Campanas = () => {
             // No filtrar por fecha ni por recaudación, solo tomar las primeras 3
             .slice(0, 3);
           
-          console.log("Campañas seleccionadas:", campañasProcesadas);
           setCampaigns(campañasProcesadas);
         } else {
-          console.warn("No se encontraron campañas en los datos");
           setCampaigns([]);
         }
       } catch (error) {
-        console.error('Error al obtener campañas:', error);
         setError('No se pudieron cargar las campañas. Intente de nuevo más tarde.');
       } finally {
         setLoading(false);
@@ -135,7 +130,6 @@ const Campanas = () => {
         year: 'numeric' 
       });
     } catch (e) {
-      console.error("Error al formatear fecha:", e);
       return "Fecha no disponible";
     }
   };

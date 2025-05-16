@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BlogSectionContainer, 
   SectionTitle, 
@@ -12,146 +12,148 @@ import {
   TitleAccent,
   BlogHeader
 } from '../../styles/styleSectionBlog';
+import { FaCalendarAlt, FaArrowLeft, FaShare, FaFacebook, FaTwitter, FaInstagram, FaReply } from 'react-icons/fa';
+import axios from 'axios';
 import styled from 'styled-components';
-import { FaCalendarAlt, FaArrowLeft, FaShare, FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
 
 const BlogSection = () => {
   const [showDetailView, setShowDetailView] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [visiblePosts, setVisiblePosts] = useState(3); 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [commentText, setCommentText] = useState('');
+  const [replyText, setReplyText] = useState('');
+  const [replyingTo, setReplyingTo] = useState(null);
 
-  const blogPosts = [
-    {
-      id: 1,
-      title: "Milagros de Esperanza: Niños que Vencieron al Cáncer",
-      excerpt: "Conoce las historias inspiradoras de niños que superaron el cáncer gracias a tratamientos innovadores y tu apoyo.",
-      content: `
-        <p>Las historias de supervivencia infantil al cáncer son una poderosa fuente de esperanza e inspiración. En nuestra fundación, hemos sido testigos de increíbles milagros que demuestran la fuerza del espíritu humano y el impacto positivo de los tratamientos innovadores.</p>
-        
-        <h3>La historia de Sofía</h3>
-        
-        <p>A sus 8 años, Sofía fue diagnosticada con leucemia linfoblástica aguda, un tipo de cáncer que afecta los glóbulos blancos. Su familia quedó devastada, pero nunca perdió la esperanza. Gracias a un tratamiento innovador financiado por donaciones como la tuya, Sofía pudo acceder a una terapia personalizada que atacaba específicamente las células cancerígenas sin dañar el resto de su cuerpo.</p>
-        
-        <p>Después de 18 meses de tratamiento, Sofía recibió la noticia que tanto esperaba: estaba libre de cáncer. Hoy, tres años después, disfruta de una vida normal, juega fútbol y sueña con ser médica para ayudar a otros niños como ella.</p>
-        
-        <h3>Martín y su batalla contra el neuroblastoma</h3>
-        
-        <p>El caso de Martín, de 5 años, parecía especialmente complicado. Un neuroblastoma en etapa avanzada amenazaba su vida, y los tratamientos convencionales no mostraban resultados. Gracias a un ensayo clínico pionero que pudimos ofrecer en nuestra fundación, Martín recibió una inmunoterapia que entrenó a su propio sistema inmunológico para combatir el cáncer.</p>
-        
-        <p>La respuesta fue sorprendente. En seis meses, los tumores comenzaron a reducirse, y hoy Martín está en remisión completa, disfrutando de su infancia y compartiendo su historia para dar esperanza a otros niños.</p>
-        
-        <h3>El impacto de tu apoyo</h3>
-        
-        <p>Estas historias no serían posibles sin el apoyo de personas como tú. Cada donación, por pequeña que sea, contribuye a financiar tratamientos innovadores, mejorar la calidad de vida durante la hospitalización y apoyar a las familias en los momentos más difíciles.</p>
-        
-        <p>Con tu ayuda, seguiremos escribiendo historias de esperanza y superación, demostrando que el cáncer infantil puede ser vencido.</p>
-      `,
-      date: "Mar 10, 2025",
-      author: "Dra. Carmen Mendoza",
-      image: "https://tse1.explicit.bing.net/th/id/OIP.UI3DRMPyWu0JkBRdC6PyaAHaGC?rs=1&pid=ImgDetMain",
-      tags: ["Esperanza", "Tratamientos", "Testimonios"]
-    },
-    {
-      id: 2,
-      title: "Avances en Tratamientos Pediátricos",
-      excerpt: "Gracias a las donaciones, hemos logrado implementar terapias avanzadas que aumentan las tasas de recuperación en un 40%.",
-      content: `
-        <p>Los últimos años han sido testigos de avances revolucionarios en el tratamiento del cáncer infantil. Gracias a la generosidad de nuestros donantes y al trabajo incansable de investigadores y médicos, hemos logrado implementar terapias pioneras que están cambiando radicalmente el pronóstico para muchos niños.</p>
-        
-        <h3>Inmunoterapia personalizada</h3>
-        
-        <p>Una de las innovaciones más prometedoras es la inmunoterapia personalizada, un tratamiento que aprovecha el propio sistema inmunológico del paciente para combatir el cáncer. Mediante técnicas avanzadas, se modifican las células T del niño para que puedan reconocer y atacar específicamente las células cancerosas.</p>
-        
-        <p>En nuestra fundación, hemos implementado este tratamiento para casos de leucemia resistente a terapias convencionales, logrando tasas de remisión del 80% en casos que antes se consideraban intratables.</p>
-        
-        <h3>Radioterapia de precisión</h3>
-        
-        <p>La radioterapia ha evolucionado significativamente. Los nuevos equipos de protonterapia permiten dirigir la radiación con una precisión milimétrica, destruyendo las células cancerosas mientras preservan los tejidos sanos circundantes. Esto es especialmente importante en niños, cuyos órganos aún están en desarrollo.</p>
-        
-        <p>Gracias a las donaciones recibidas, hemos podido adquirir un equipo de última generación que ha beneficiado ya a más de 50 niños con tumores cerebrales y otros cánceres de difícil acceso.</p>
-        
-        <h3>Diagnóstico molecular avanzado</h3>
-        
-        <p>La detección temprana sigue siendo crucial para el éxito del tratamiento. Las nuevas técnicas de diagnóstico molecular permiten identificar marcadores genéticos específicos del cáncer, lo que posibilita tratamientos más dirigidos y efectivos.</p>
-        
-        <p>Con tu apoyo, hemos implementado un laboratorio de diagnóstico molecular que ha reducido el tiempo promedio de diagnóstico de 15 a 5 días, permitiendo iniciar los tratamientos con mayor rapidez.</p>
-        
-        <h3>El futuro es prometedor</h3>
-        
-        <p>Estos avances son solo el comienzo. Con el continuo apoyo de la comunidad, estamos trabajando en nuevas investigaciones que prometen transformar aún más el panorama del cáncer infantil, acercándonos cada día a nuestro objetivo final: que ningún niño pierda su infancia a causa del cáncer.</p>
-      `,
-      date: "Mar 5, 2025",
-      author: "Dr. Roberto Altamirano",
-      image: "https://www.lostiempos.com/sites/default/files/media_imagen/2018/7/17/15_me_2_rochaaa.jpg",
-      tags: ["Investigación", "Tecnología", "Tratamientos"]
-    },
-    {
-      id: 3,
-      title: "Voluntarios que Cambian Vidas",
-      excerpt: "Conoce a Juan, un voluntario que ha ayudado a más de 20 familias durante el tratamiento de sus hijos contra el cáncer.",
-      content: `
-        <p>Detrás de cada niño que lucha contra el cáncer hay un equipo de profesionales médicos dedicados, familias resilientes y, a menudo, voluntarios extraordinarios cuya compasión y compromiso marcan una diferencia significativa en el viaje hacia la recuperación.</p>
-        
-        <h3>La historia de Juan</h3>
-        
-        <p>Juan Méndez nunca imaginó que perder a su sobrino por leucemia cambiaría completamente el rumbo de su vida. Tras el duelo, decidió honrar la memoria del pequeño Pablo convirtiéndose en voluntario en nuestra fundación. Durante los últimos cinco años, Juan ha dedicado sus fines de semana a acompañar a niños durante sus tratamientos, ofreciendo apoyo tanto práctico como emocional.</p>
-        
-        <p>"Lo más importante es estar presente", explica Juan. "A veces solo se trata de jugar una partida de ajedrez, leer un cuento o simplemente escuchar. Estos momentos de normalidad en medio de una situación tan difícil son invaluables para los niños y sus familias".</p>
-        
-        <h3>El impacto del voluntariado</h3>
-        
-        <p>Los estudios han demostrado que el apoyo emocional adecuado puede mejorar significativamente la experiencia del tratamiento e incluso influir positivamente en los resultados médicos. Los voluntarios como Juan crean un entorno más cálido y humano dentro del hospital, aliviando el estrés tanto de los niños como de los padres.</p>
-        
-        <p>María, madre de Lucía, una niña de 7 años en tratamiento por un tumor óseo, comparte: "Los días de quimioterapia solían ser una pesadilla para nosotras. Desde que Juan comenzó a visitarnos, Lucía espera con ansias ir al hospital para verlo. Ha transformado completamente nuestra experiencia".</p>
-        
-        <h3>Un programa en crecimiento</h3>
-        
-        <p>Inspirados por el ejemplo de Juan y el impacto positivo de su labor, hemos expandido nuestro programa de voluntariado, que ahora cuenta con más de 50 personas dedicadas. Ofrecemos formación especializada en apoyo emocional a pacientes oncológicos pediátricos y sus familias, creando una red de soporte que se extiende más allá de las paredes del hospital.</p>
-        
-        <p>Los voluntarios apoyan a las familias de múltiples maneras: desde actividades recreativas con los niños hasta ayuda logística para familias que deben trasladarse lejos de casa para recibir tratamiento, pasando por grupos de apoyo para padres y hermanos.</p>
-        
-        <h3>Únete a nuestro equipo</h3>
-        
-        <p>Si te inspira la historia de Juan y quieres marcar la diferencia en la vida de un niño con cáncer y su familia, te invitamos a unirte a nuestro programa de voluntariado. No se requiere experiencia médica, solo un corazón dispuesto a servir y la capacidad de brindar apoyo con sensibilidad y respeto.</p>
-        
-        <p>Como dice Juan: "Recibo mucho más de lo que doy. Estos niños me han enseñado el verdadero significado de la valentía y la esperanza. Es un privilegio formar parte de sus vidas".</p>
-      `,
-      date: "Feb 28, 2025",
-      author: "Ana Gutiérrez",
-      image: "https://tse2.mm.bing.net/th/id/OIP.yNgWRR2d3-iU6_DvKH1a_AHaE6?rs=1&pid=ImgDetMain",
-      tags: ["Voluntariado", "Comunidad", "Apoyo"]
-    }
-  ];
-  
+
+    const fetchBlogs = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/blog');
+        setBlogPosts(response.data.data);
+        setLoading(false);
+      } catch (error) {
+        setError('Error al cargar los blogs');
+        setLoading(false);
+        console.error('Error fetching blogs:', error);
+      }
+    };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
+
+  const loadMorePosts = () => {
+    setVisiblePosts(blogPosts.length);
+  };
+
   const handleReadMore = (blog) => {
-    setSelectedBlog(blog);
-    setShowDetailView(true);
-    window.scrollTo(0, 0);
+     const fetchBlogDetails = async (blogId) => {
+      try {
+        const response = await axios.get(`http://localhost:3000/blog/${blogId}`);
+        setSelectedBlog(response.data.data);
+        setShowDetailView(true);
+        window.scrollTo(0, 0);
+      } catch (error) {
+        console.error('Error al cargar el detalle del blog:', error);
+        alert('No se pudo cargar el detalle del blog');
+      }
+    };
+    
+    fetchBlogDetails(blog.id);
   };
   
   const handleBack = () => {
+   fetchBlogs();
     setShowDetailView(false);
     setSelectedBlog(null);
+    setReplyingTo(null);
   };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('es-ES', options);
+  };
+
+  const handleCommentSubmit = async (e) => {
+     e.preventDefault();
+    if (!commentText.trim()) return;
+
+    try {
+      await axios.post('http://localhost:3000/comentarios', {
+        comentario: commentText,
+        idBlog: selectedBlog.id
+      });
+      
+      const response = await axios.get(`http://localhost:3000/blog/${selectedBlog.id}`);
+      setSelectedBlog(response.data.data);
+      setCommentText('');
+    } catch (error) {
+      console.error('Error al publicar comentario:', error);
+      alert('No se pudo publicar el comentario');
+    }
+  };
+
+  const handleReplyToggle = (commentId) => {
+    setReplyingTo(replyingTo === commentId ? null : commentId);
+    setReplyText('');
+  };
+
+
+  const handleReplySubmit = async (e, commentId) => {
+    e.preventDefault();
+    if (!replyText.trim()) return;
+
+    try {
+      await axios.post('http://localhost:3000/respuesta', {
+        respuesta: replyText,
+        idComentario: commentId
+      });
+      
+      const response = await axios.get(`http://localhost:3000/blog/${selectedBlog.id}`);
+      setSelectedBlog(response.data.data);
+      setReplyText('');
+      setReplyingTo(null);
+    } catch (error) {
+      console.error('Error al publicar respuesta:', error);
+      alert('No se pudo publicar la respuesta');
+    }
+  };
+
+  if (loading) return <div>Cargando blogs...</div>;
+  if (error) return <div>{error}</div>;
   
   return (
-    <BlogSectionContainer>
+      <BlogSectionContainer>
       {!showDetailView ? (
         <>
           <BlogHeader>
             <SectionTitle>Ultimas <TitleAccent>noticias</TitleAccent> & Historias</SectionTitle>
           </BlogHeader>
           <BlogGrid>
-            {blogPosts.map((post, i) => (
-              <BlogCard key={i}>
-                <BlogImage imageUrl={post.image}>
-                  <BlogDate>{post.date}</BlogDate>
+            {blogPosts.slice(0, visiblePosts).map((post) => (
+              <BlogCard key={post.id}>
+                <BlogImage imageUrl={post.imagen}>
+                  <BlogDate>{formatDate(post.fecha)}</BlogDate>
                 </BlogImage>
-                <BlogTitle>{post.title}</BlogTitle>
+                <BlogTitle>{post.titulo}</BlogTitle>
                 <BlogExcerpt>{post.excerpt}</BlogExcerpt>
                 <ReadMoreButton onClick={() => handleReadMore(post)}>Leer más</ReadMoreButton>
               </BlogCard>
             ))}
           </BlogGrid>
+          
+          {/* Botón para cargar más noticias */}
+          {visiblePosts < blogPosts.length && (
+            <LoadMoreContainer>
+              <LoadMoreButton onClick={loadMorePosts}>
+                Ver más noticias <FaArrowDown />
+              </LoadMoreButton>
+            </LoadMoreContainer>
+          )}
         </>
       ) : (
         <BlogDetailView>
@@ -175,29 +177,85 @@ const BlogSection = () => {
             </ShareContainer>
           </BlogDetailHeader>
           
-          <BlogDetailHero imageUrl={selectedBlog?.image}>
+          <BlogDetailHero imageUrl={selectedBlog?.imagen}>
             <BlogDetailOverlay>
-              <BlogDetailCategory>{selectedBlog?.tags[0]}</BlogDetailCategory>
-              <BlogDetailTitle>{selectedBlog?.title}</BlogDetailTitle>
+              <BlogDetailCategory>{selectedBlog?.categoria?.nombre}</BlogDetailCategory>
+              <BlogDetailTitle>{selectedBlog?.titulo}</BlogDetailTitle>
               <BlogDetailMeta>
-                <BlogDetailAuthor>Por {selectedBlog?.author}</BlogDetailAuthor>
+                <BlogDetailAuthor>{selectedBlog?.autor}</BlogDetailAuthor>
                 <BlogDetailDateWrapper>
                   <FaCalendarAlt />
-                  <span>{selectedBlog?.date}</span>
+                  <span>{formatDate(selectedBlog?.fecha)}</span>
                 </BlogDetailDateWrapper>
               </BlogDetailMeta>
             </BlogDetailOverlay>
           </BlogDetailHero>
           
-          <BlogDetailContent 
-            dangerouslySetInnerHTML={{ __html: selectedBlog?.content }} 
-          />
+          <BlogDetailContent>
+            {/* Renderizar contenidos del blog en orden */}
+            {selectedBlog?.contenidos?.length > 0 ? (
+              selectedBlog.contenidos.map((contenido) => (
+                <div key={contenido.id}>
+                  {contenido.titulo && <h3>{contenido.titulo}</h3>}
+                  <p>{contenido.texto}</p>
+                </div>
+              ))
+            ) : (
+              <p>{selectedBlog?.excerpt}</p>
+            )}
+          </BlogDetailContent>
           
           <BlogDetailTags>
-            {selectedBlog?.tags.map((tag, index) => (
-              <BlogDetailTag key={index}>{tag}</BlogDetailTag>
+            {selectedBlog?.tags?.map((tag) => (
+              <BlogDetailTag key={tag.id}>{tag.nombre}</BlogDetailTag>
             ))}
           </BlogDetailTags>
+          
+          {/* Sección de comentarios */}
+          <CommentsSection>
+            <CommentsTitle>Comentarios ({selectedBlog?.comentarios?.length || 0})</CommentsTitle>
+            
+            {selectedBlog?.comentarios?.map((comment) => (
+              <CommentCard key={comment.id}>
+                <CommentText>{comment.comentario}</CommentText>
+                <ReplyButton onClick={() => handleReplyToggle(comment.id)}>
+                  <FaReply /> Responder
+                </ReplyButton>
+                
+                {/* Respuestas a este comentario */}
+                {comment.respuesta?.map((reply) => (
+                  <ReplyCard key={reply.id}>
+                    <ReplyText>{reply.respuesta}</ReplyText>
+                  </ReplyCard>
+                ))}
+                
+                {/* Formulario para responder */}
+                {replyingTo === comment.id && (
+                  <ReplyForm onSubmit={(e) => handleReplySubmit(e, comment.id)}>
+                    <ReplyInput
+                      placeholder="Escribe tu respuesta..."
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      required
+                    />
+                    <SubmitButton type="submit">Responder</SubmitButton>
+                  </ReplyForm>
+                )}
+              </CommentCard>
+            ))}
+            
+            {/* Formulario para comentar */}
+            <CommentForm onSubmit={handleCommentSubmit}>
+              <CommentsTitle>Deja tu comentario</CommentsTitle>
+              <CommentInput
+                placeholder="Escribe tu comentario..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                required
+              />
+              <SubmitButton type="submit">Publicar comentario</SubmitButton>
+            </CommentForm>
+          </CommentsSection>
           
           <BlogDetailFooter>
             <RelatedArticlesTitle>Artículos relacionados</RelatedArticlesTitle>
@@ -205,12 +263,12 @@ const BlogSection = () => {
               {blogPosts
                 .filter(post => post.id !== selectedBlog?.id)
                 .slice(0, 2)
-                .map((post, i) => (
-                  <RelatedArticleCard key={i} onClick={() => handleReadMore(post)}>
-                    <RelatedArticleImage imageUrl={post.image}>
-                      <RelatedArticleDate>{post.date}</RelatedArticleDate>
+                .map((post) => (
+                  <RelatedArticleCard key={post.id} onClick={() => handleReadMore(post)}>
+                    <RelatedArticleImage imageUrl={post.imagen}>
+                      <RelatedArticleDate>{formatDate(post.fecha)}</RelatedArticleDate>
                     </RelatedArticleImage>
-                    <RelatedArticleTitle>{post.title}</RelatedArticleTitle>
+                    <RelatedArticleTitle>{post.titulo}</RelatedArticleTitle>
                   </RelatedArticleCard>
                 ))}
             </RelatedArticlesGrid>
@@ -225,65 +283,63 @@ export default BlogSection;
 
 const BlogDetailView = styled.div`
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 2rem 1rem;
 `;
 
 const BlogDetailHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
 `;
 
 const BackButton = styled.button`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   background: none;
   border: none;
-  color: #555;
+  color: #0066cc;
   font-weight: 600;
   cursor: pointer;
-  padding: 10px 0;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
   
   &:hover {
-    color: ${props => props.theme.colors?.primary || '#FF6347'};
+    color: #004999;
   }
 `;
 
 const ShareContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 1rem;
 `;
 
 const ShareText = styled.span`
-  font-size: 14px;
-  color: #555;
+  font-weight: 500;
 `;
 
 const SocialIcons = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 0.5rem;
 `;
 
 const SocialIcon = styled.a`
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background-color: #f5f5f5;
+  background-color: #f0f0f0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #555;
-  cursor: pointer;
+  color: #333;
   transition: all 0.3s ease;
+  cursor: pointer;
   
   &:hover {
-    background-color: ${props => props.theme.colors?.primary || '#FF6347'};
+    background-color: #0066cc;
     color: white;
   }
 `;
@@ -291,13 +347,12 @@ const SocialIcon = styled.a`
 const BlogDetailHero = styled.div`
   height: 400px;
   width: 100%;
-  background-image: url(${props => props.imageUrl});
+  background-image: ${props => `url(${props.imageUrl})`};
   background-size: cover;
   background-position: center;
-  border-radius: 12px;
+  border-radius: 8px;
   position: relative;
-  overflow: hidden;
-  margin-bottom: 30px;
+  margin-bottom: 2rem;
 `;
 
 const BlogDetailOverlay = styled.div`
@@ -305,35 +360,35 @@ const BlogDetailOverlay = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 30px;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  padding: 2rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
   color: white;
+  border-radius: 0 0 8px 8px;
 `;
 
 const BlogDetailCategory = styled.span`
-  background-color: ${props => props.theme.colors?.primary || '#FF6347'};
+  background-color: #0066cc;
   color: white;
-  padding: 5px 10px;
+  padding: 0.3rem 1rem;
   border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
   text-transform: uppercase;
-  margin-bottom: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
   display: inline-block;
 `;
 
 const BlogDetailTitle = styled.h1`
-  font-size: 32px;
+  font-size: 2.5rem;
+  margin: 1rem 0;
   font-weight: 700;
-  margin-bottom: 15px;
-  line-height: 1.2;
 `;
 
 const BlogDetailMeta = styled.div`
   display: flex;
   align-items: center;
-  gap: 20px;
-  font-size: 14px;
+  gap: 1.5rem;
+  margin-top: 1rem;
 `;
 
 const BlogDetailAuthor = styled.span`
@@ -343,71 +398,56 @@ const BlogDetailAuthor = styled.span`
 const BlogDetailDateWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.5rem;
 `;
 
 const BlogDetailContent = styled.div`
-  font-size: 16px;
   line-height: 1.8;
-  color: #444;
-  margin-bottom: 30px;
-  
-  p {
-    margin-bottom: 20px;
-  }
+  font-size: 1.1rem;
+  color: #333;
   
   h3 {
-    font-size: 22px;
-    font-weight: 700;
-    margin: 30px 0 15px;
-    color: #333;
+    font-size: 1.5rem;
+    margin: 2rem 0 1rem;
+    color: #111;
   }
   
-  img {
-    max-width: 100%;
-    border-radius: 8px;
-    margin: 20px 0;
+  p {
+    margin-bottom: 1.5rem;
   }
 `;
 
 const BlogDetailTags = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 40px;
+  gap: 0.5rem;
+  margin: 2rem 0;
 `;
 
 const BlogDetailTag = styled.span`
-  background-color: #f5f5f5;
+  background-color: #f0f0f0;
+  padding: 0.3rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
   color: #555;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  
-  &:hover {
-    background-color: #e5e5e5;
-  }
 `;
 
 const BlogDetailFooter = styled.div`
-  margin-top: 60px;
-  padding-top: 40px;
-  border-top: 1px solid #eee;
+  margin-top: 3rem;
+  border-top: 1px solid #eaeaea;
+  padding-top: 2rem;
 `;
 
 const RelatedArticlesTitle = styled.h3`
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 30px;
-  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
 `;
 
 const RelatedArticlesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
+  gap: 2rem;
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -415,6 +455,9 @@ const RelatedArticlesGrid = styled.div`
 `;
 
 const RelatedArticleCard = styled.div`
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: transform 0.3s ease;
   
@@ -425,35 +468,152 @@ const RelatedArticleCard = styled.div`
 
 const RelatedArticleImage = styled.div`
   height: 200px;
-  width: 100%;
-  background-image: url(${props => props.imageUrl});
+  background-image: ${props => `url(${props.imageUrl})`};
   background-size: cover;
   background-position: center;
-  border-radius: 8px;
   position: relative;
-  overflow: hidden;
-  margin-bottom: 15px;
 `;
 
-const RelatedArticleDate = styled.div`
+const RelatedArticleDate = styled.span`
   position: absolute;
-  bottom: 15px;
-  left: 15px;
+  bottom: 10px;
+  left: 10px;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 5px 10px;
+  padding: 0.2rem 0.8rem;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 0.8rem;
 `;
 
 const RelatedArticleTitle = styled.h4`
-  font-size: 16px;
+  padding: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
-  line-height: 1.4;
-  color: #333;
-  transition: color 0.3s ease;
+`;
+
+const CommentsSection = styled.div`
+  margin-top: 3rem;
+  border-top: 1px solid #eaeaea;
+  padding-top: 2rem;
+`;
+
+const CommentsTitle = styled.h3`
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+`;
+
+const CommentCard = styled.div`
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+`;
+
+const CommentText = styled.p`
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+`;
+
+const ReplyButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: #0066cc;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 0.5rem;
   
   &:hover {
-    color: ${props => props.theme.colors?.primary || '#FF6347'};
+    text-decoration: underline;
+  }
+`;
+
+const ReplyCard = styled.div`
+  background-color: #fff;
+  border-left: 3px solid #0066cc;
+  padding: 1rem;
+  margin: 0.8rem 0 0.8rem 1.5rem;
+`;
+
+const ReplyText = styled.p`
+  font-size: 0.95rem;
+  line-height: 1.5;
+`;
+
+const CommentForm = styled.form`
+  margin-top: 2rem;
+  background-color: #f0f0f0;
+  padding: 1.5rem;
+  border-radius: 8px;
+`;
+
+const CommentInput = styled.textarea`
+  width: 100%;
+  min-height: 100px;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-family: inherit;
+  resize: vertical;
+`;
+
+const SubmitButton = styled.button`
+  background-color: #0066cc;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: #004999;
+  }
+`;
+
+const ReplyForm = styled.form`
+  margin: 1rem 0 1rem 1.5rem;
+  padding: 1rem;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+`;
+
+const ReplyInput = styled.textarea`
+  width: 100%;
+  min-height: 80px;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-family: inherit;
+  resize: vertical;
+`;
+const LoadMoreContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+`;
+
+const LoadMoreButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.8rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: #004999;
   }
 `;

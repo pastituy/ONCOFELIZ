@@ -118,6 +118,16 @@ const Sidebar = () => {
           {!collapsed && <NavText>Recuperados</NavText>}
           {!collapsed && isActive("/dasboard/donaciones-campana") && <ActiveIndicator />}
         </NavItem>
+        <NavItem
+          active={isActive("/dasboard/chat")}
+          onClick={() => handleNavigation("/dasboard/chat")}
+        >
+          <NavIconWrapper active={isActive("/dasboard/chat")}>
+            <FaMoneyBill />
+          </NavIconWrapper>
+          {!collapsed && <NavText>Chat</NavText>}
+          {!collapsed && isActive("/dasboard/chat") && <ActiveIndicator />}
+        </NavItem>
       </NavMenu>
 
       <UserSection onClick={handleLogout}>

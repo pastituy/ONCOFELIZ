@@ -34,7 +34,6 @@ const CasosRecuperados = () => {
         setStories(response.data);
         setLoading(false);
       } catch (err) {
-        console.error('Error al cargar los casos recuperados:', err);
         setError('No se pudieron cargar las historias de recuperación');
         setLoading(false);
       }

@@ -14,6 +14,7 @@ const Noticias = () => {
   const [categorias, setCategorias] = useState([]);
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState("");
+  const [loadingData, setLoadingData] = useState(false);
   const [form, setForm] = useState({
     titulo: "",
     excerpt: "",
@@ -21,7 +22,7 @@ const Noticias = () => {
     imagen: "",
     idCategoria: "",
     tags: [],
-    contenidos: [{ titulo: "", texto: "", orden: 0 }]
+    contenidos: [{ titulo: "", texto: "", orden: 0 }],
   });
   const [dataEvento, setDataEvento] = useState([]); // Guardar datos de la API
 
@@ -39,17 +40,19 @@ const Noticias = () => {
   const addContenido = () => {
     setForm({
       ...form,
-      contenidos: [...form.contenidos, { titulo: "", texto: "", orden: form.contenidos.length }]
+      contenidos: [
+        ...form.contenidos,
+        { titulo: "", texto: "", orden: form.contenidos.length },
+      ],
     });
   };
 
   const removeContenido = (index) => {
     const newContenidos = [...form.contenidos];
     newContenidos.splice(index, 1);
-    // Reordenar los índices
     const reorderedContenidos = newContenidos.map((contenido, idx) => ({
       ...contenido,
-      orden: idx
+      orden: idx,
     }));
     setForm({ ...form, contenidos: reorderedContenidos });
   };
@@ -62,10 +65,11 @@ const Noticias = () => {
   };
 
   const removeTag = (tag) => {
-    setForm({ ...form, tags: form.tags.filter(t => t !== tag) });
+    setForm({ ...form, tags: form.tags.filter((t) => t !== tag) });
   };
 
   const getData = async () => {
+    setLoadingData(true);
     try {
       const response = await fetch("http://localhost:3000/blog", {
         method: "GET",
@@ -75,20 +79,32 @@ const Noticias = () => {
       });
       const data = await response.json();
 
-      setDataEvento(data.data);
       if (!response.ok) {
         toast.error(data.mensaje || "Error al obtener las noticias");
         return;
       }
-      toast.success(data.mensaje);
+
+      const formattedData = data.data.map((blog) => ({
+        ...blog,
+        fecha: new Date(blog.fecha).toLocaleDateString("es-ES", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }),
+      }));
+
+      setDataEvento(formattedData);
     } catch (error) {
       toast.error("Hubo un problema al obtener las noticias");
+      console.error(error);
+    } finally {
+      setLoadingData(false);
     }
   };
 
   const getCategorias = async () => {
     try {
-      const response = await fetch("http://localhost:3000/categorias", {
+      const response = await fetch("http://localhost:3000/categoria", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -98,6 +114,7 @@ const Noticias = () => {
       setCategorias(data.data || []);
     } catch (error) {
       toast.error("Error al cargar las categorías");
+      console.error(error);
     }
   };
 
@@ -116,6 +133,32 @@ const Noticias = () => {
     }
   };
 
+  const getBlogById = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3000/blog/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.error(
+          errorData.mensaje || "Error al obtener los detalles del blog"
+        );
+        return null;
+      }
+
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      toast.error("Error al cargar los detalles del blog");
+      console.error(error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     getData();
     getCategorias();
@@ -130,7 +173,7 @@ const Noticias = () => {
       imagen: "",
       idCategoria: "",
       tags: [],
-      contenidos: [{ titulo: "", texto: "", orden: 0 }]
+      contenidos: [{ titulo: "", texto: "", orden: 0 }],
     });
     setItem({});
   };
@@ -146,24 +189,40 @@ const Noticias = () => {
     resetForm();
   };
 
-  const editarEvento = (data) => {
-    // Preparar el formulario con los datos existentes
-    setForm({
-      titulo: data.titulo || "",
-      excerpt: data.excerpt || "",
-      autor: data.autor || "",
-      imagen: data.imagen || "",
-      idCategoria: data.idCategoria || "",
-      tags: data.tags?.map(tag => tag.nombre) || [],
-      contenidos: data.contenidos || [{ titulo: "", texto: "", orden: 0 }]
-    });
+  const editarEvento = async (data) => {
+    try {
+      const blogCompleto = await getBlogById(data.id);
 
-    setItem(data);
-    setIsEditing(true);
-    setShowModal(true);
+      if (!blogCompleto) {
+        return;
+      }
+
+      setForm({
+        titulo: blogCompleto.titulo || "",
+        excerpt: blogCompleto.excerpt || "",
+        autor: blogCompleto.autor || "",
+        imagen: blogCompleto.imagen || "",
+        idCategoria: blogCompleto.idCategoria?.toString() || "",
+        tags: blogCompleto.tags?.map((tag) => tag.nombre) || [],
+        contenidos: blogCompleto.contenidos?.sort(
+          (a, b) => a.orden - b.orden
+        ) || [{ titulo: "", texto: "", orden: 0 }],
+      });
+
+      setItem(blogCompleto);
+      setIsEditing(true);
+      setShowModal(true);
+    } catch (error) {
+      toast.error("Error al preparar el formulario de edición");
+      console.error(error);
+    }
   };
 
   const eliminarEvento = async (id) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar esta noticia?")) {
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:3000/blog/${id}`, {
         method: "DELETE",
@@ -177,9 +236,10 @@ const Noticias = () => {
         return;
       }
       getData();
-      toast.success(data.mensaje);
+      toast.success(data.mensaje || "Noticia eliminada correctamente");
     } catch (error) {
       toast.error("Hubo un problema al eliminar");
+      console.error(error);
     }
   };
 
@@ -194,16 +254,22 @@ const Noticias = () => {
   const handleAgregar = async (e) => {
     e.preventDefault();
 
-    // Validar que todos los campos obligatorios estén llenos
     if (!form.titulo || !form.excerpt || !form.autor) {
       toast.error("Por favor completa los campos obligatorios");
       return;
     }
 
-    if (form.contenidos.some(contenido => !contenido.titulo || !contenido.texto)) {
+    if (
+      form.contenidos.some((contenido) => !contenido.titulo || !contenido.texto)
+    ) {
       toast.error("Todos los contenidos deben tener título y texto");
       return;
     }
+
+    const formData = {
+      ...form,
+      idCategoria: form.idCategoria ? Number(form.idCategoria) : null,
+    };
 
     if (isEditing) {
       try {
@@ -212,7 +278,7 @@ const Noticias = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(form),
+          body: JSON.stringify(formData),
         });
 
         const result = await response.json();
@@ -222,9 +288,10 @@ const Noticias = () => {
         }
         getData();
         closeModal();
-        toast.success(result.mensaje);
+        toast.success(result.mensaje || "Noticia actualizada correctamente");
       } catch (error) {
         toast.error("Hubo un problema al editar la noticia");
+        console.error(error);
       }
     } else {
       try {
@@ -233,7 +300,7 @@ const Noticias = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(form),
+          body: JSON.stringify(formData),
         });
 
         const result = await response.json();
@@ -243,11 +310,18 @@ const Noticias = () => {
         }
         getData();
         closeModal();
-        toast.success(result.mensaje);
+        toast.success(result.mensaje || "Noticia creada correctamente");
       } catch (error) {
         toast.error("Hubo un problema al crear la noticia");
+        console.error(error);
       }
     }
+  };
+
+  const getNestedValue = (obj, path) => {
+    return path.split(".").reduce((acc, part) => {
+      return acc && acc[part] !== undefined ? acc[part] : null;
+    }, obj);
   };
 
   const columns = [
@@ -266,12 +340,21 @@ const Noticias = () => {
     {
       header: "Categoría",
       acceso: "categoria.nombre",
+      render: (item) =>
+        getNestedValue(item, "categoria.nombre") || "Sin categoría",
     },
     {
       header: "Fecha",
       acceso: "fecha",
     },
   ];
+
+  const handleTagKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addTag();
+    }
+  };
 
   return (
     <Container>
@@ -297,6 +380,7 @@ const Noticias = () => {
         data={dataEvento}
         onDelete={eliminarEvento}
         onEdit={editarEvento}
+        loading={loadingData}
       />
 
       {showModal && (
@@ -319,6 +403,7 @@ const Noticias = () => {
                       value={form.titulo}
                       onChange={handleInputChange}
                       required
+                      placeholder="Título de la noticia"
                     />
                   </FormGroup>
 
@@ -330,6 +415,7 @@ const Noticias = () => {
                       onChange={handleInputChange}
                       required
                       rows={3}
+                      placeholder="Breve resumen de la noticia"
                     />
                   </FormGroup>
 
@@ -341,6 +427,7 @@ const Noticias = () => {
                       value={form.autor}
                       onChange={handleInputChange}
                       required
+                      placeholder="Nombre del autor"
                     />
                   </FormGroup>
 
@@ -378,22 +465,52 @@ const Noticias = () => {
                         type="text"
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
-                        placeholder="Agregar tag"
+                        onKeyDown={handleTagKeyDown}
+                        placeholder="Agregar tag y presiona Enter o Añadir"
                       />
                       <AddTagButton type="button" onClick={addTag}>
                         Añadir
                       </AddTagButton>
                     </TagInputContainer>
-                    <TagsContainer>
-                      {form.tags.map((tag, index) => (
-                        <Tag key={index}>
-                          {tag}
-                          <RemoveTagButton onClick={() => removeTag(tag)}>
-                            ×
-                          </RemoveTagButton>
-                        </Tag>
-                      ))}
-                    </TagsContainer>
+
+                    {tags.length > 0 && (
+                      <SuggestionTags>
+                        <Label>Tags existentes (click para seleccionar):</Label>
+                        <TagsContainer>
+                          {tags.map((tag) => (
+                            <SuggestionTag
+                              key={tag.id}
+                              onClick={() => {
+                                if (!form.tags.includes(tag.nombre)) {
+                                  setForm({
+                                    ...form,
+                                    tags: [...form.tags, tag.nombre],
+                                  });
+                                }
+                              }}
+                            >
+                              {tag.nombre}
+                            </SuggestionTag>
+                          ))}
+                        </TagsContainer>
+                      </SuggestionTags>
+                    )}
+
+                    {form.tags.length > 0 && (
+                      <div>
+                        <Label>Tags seleccionados:</Label>
+                        <TagsContainer>
+                          {form.tags.map((tag, index) => (
+                            <Tag key={index}>
+                              {tag}
+                              <RemoveTagButton onClick={() => removeTag(tag)}>
+                                ×
+                              </RemoveTagButton>
+                            </Tag>
+                          ))}
+                        </TagsContainer>
+                      </div>
+                    )}
                   </FormGroup>
                 </FormGrid>
 
@@ -418,9 +535,14 @@ const Noticias = () => {
                           type="text"
                           value={contenido.titulo}
                           onChange={(e) =>
-                            handleContenidoChange(index, "titulo", e.target.value)
+                            handleContenidoChange(
+                              index,
+                              "titulo",
+                              e.target.value
+                            )
                           }
                           required
+                          placeholder="Título de esta sección"
                         />
                       </FormGroup>
                       <FormGroup>
@@ -428,10 +550,15 @@ const Noticias = () => {
                         <TextArea
                           value={contenido.texto}
                           onChange={(e) =>
-                            handleContenidoChange(index, "texto", e.target.value)
+                            handleContenidoChange(
+                              index,
+                              "texto",
+                              e.target.value
+                            )
                           }
                           rows={5}
                           required
+                          placeholder="Contenido detallado de esta sección"
                         />
                       </FormGroup>
                     </ContenidoContainer>
@@ -458,9 +585,6 @@ const Noticias = () => {
   );
 };
 
-export default Noticias;
-
-// Estilos existentes mantenidos y nuevos estilos agregados
 const Container = styled.div`
   padding: 20px;
 `;
@@ -468,62 +592,81 @@ const Container = styled.div`
 const TopSection = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
 `;
 
 const DateFile = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 20px;
+  flex-direction: row;
 `;
 
 const LoginButton = styled.button`
-  background-color: #007bff;
+  width: 100px;
+  height: 35px;
+  background-color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-size: 0.5;
+  font-weight: 600;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-
+  transition: opacity 0.3s ease;
   &:hover {
-    background-color: #0069d9;
+    opacity: 0.9;
   }
 `;
 
 const ButtonExcel = styled.button`
-  background-color: white;
-  color: #2ba84a;
-  border: 1px solid #2ba84a;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
+  width: 70px;
+  height: 35px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
-
+  background: none;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  color: #595959;
+  transition: 0.5s;
   &:hover {
-    background-color: #f0f0f0;
+    color: rgba(43, 168, 74, 0.63);
   }
 `;
 
 const ButtonPDF = styled.button`
-  background-color: white;
-  color: #f25c54;
-  border: 1px solid #f25c54;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
+  width: 70px;
+  height: 35px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
-
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: #595959;
+  transition: 0.5s;
   &:hover {
-    background-color: #f0f0f0;
+    color: rgba(242, 92, 84, 0.63);
   }
 `;
+const Select = styled.select`
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d1d1;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
 
+  &:focus {
+    outline: none;
+    border-color: #0a66c2;
+    box-shadow: 0 0 0 2px rgba(10, 102, 194, 0.2);
+  }
+`;
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -537,29 +680,25 @@ const ModalOverlay = styled.div`
   z-index: 1000;
 `;
 
-const Modal = styled.div`
+const ModalLarge = styled.div`
   background-color: white;
   border-radius: 8px;
-  width: 500px;
+  width: 90%;
+  max-width: 700px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-`;
-
-const ModalLarge = styled(Modal)`
-  width: 800px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const ModalHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 15px 20px;
   border-bottom: 1px solid #e0e0e0;
-
   h2 {
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 18px;
   }
 `;
 
@@ -567,128 +706,140 @@ const CloseButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: #777;
+
+  &:hover {
+    color: #333;
+  }
 `;
 
 const ModalContent = styled.div`
-  padding: 16px;
+  padding: 20px;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 16px;
 `;
 
 const FormGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  margin-bottom: 15px;
 `;
 
 const Label = styled.label`
-  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #555;
 `;
 
 const Input = styled.input`
-  padding: 8px 12px;
-  border: 1px solid #ccc;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 1rem;
-`;
+  font-size: 14px;
 
-const Select = styled.select`
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
+  &:focus {
+    outline: none;
+    border-color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
+  }
 `;
 
 const TextArea = styled.textarea`
-  padding: 8px 12px;
-  border: 1px solid #ccc;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 1rem;
+  font-size: 14px;
+  min-height: 100px;
   resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
+  }
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 10px;
 `;
 
 const CancelButton = styled.button`
-  background-color: #f8f9fa;
-  color: #212529;
-  border: 1px solid #ccc;
-  padding: 8px 16px;
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  background-color: white;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: 600;
 
   &:hover {
-    background-color: #e2e6ea;
+    background-color: #f5f5f5;
   }
 `;
 
 const SubmitButton = styled.button`
-  background-color: #007bff;
-  color: white;
+  padding: 8px 15px;
   border: none;
-  padding: 8px 16px;
+  background-color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
+  color: white;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: 600;
 
   &:hover {
-    background-color: #0069d9;
+    opacity: 0.9;
   }
 `;
 
 const SectionTitle = styled.h3`
-  margin-top: 20px;
-  margin-bottom: 10px;
+  margin: 24px 0 16px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 10px;
+  color: #333;
 `;
 
-const ContenidoSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
+const ContenidoSection = styled.div``;
 
 const ContenidoContainer = styled.div`
+  background-color: #f9f9f9;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 16px;
-  background-color: #f9f9f9;
+  margin-bottom: 16px;
 `;
 
 const ContenidoHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 
   h4 {
     margin: 0;
+    color: #333;
+    font-size: 16px;
   }
 `;
 
 const RemoveContenidoButton = styled.button`
   background: none;
   border: none;
-  color: #dc3545;
+  color: #d32f2f;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -696,80 +847,118 @@ const RemoveContenidoButton = styled.button`
   border-radius: 4px;
 
   &:hover {
-    background-color: #f8d7da;
+    background-color: rgba(211, 47, 47, 0.1);
   }
 `;
 
 const AddContenidoButton = styled.button`
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  background-color: white;
+  color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
+  border: 1px dashed ${(props) => props.theme?.colors?.primary || "#FF6347"};
+  padding: 12px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
+  width: 100%;
+  font-weight: 500;
+  margin-bottom: 16px;
 
   &:hover {
-    background-color: #218838;
+    background-color: rgba(255, 99, 71, 0.05);
   }
 `;
 
 const TagInputContainer = styled.div`
   display: flex;
   gap: 8px;
+  margin-bottom: 8px;
 `;
 
 const TagInput = styled.input`
-  padding: 8px 12px;
-  border: 1px solid #ccc;
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 1rem;
-  flex-grow: 1;
+  font-size: 14px;
+
+  &:focus {
+    outline: none;
+    border-color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
+    box-shadow: none;
+  }
 `;
 
 const AddTagButton = styled.button`
-  background-color: #6c757d;
+  background-color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 0 16px;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
 
   &:hover {
-    background-color: #5a6268;
+    opacity: 0.9;
   }
 `;
 
 const TagsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   margin-top: 8px;
 `;
 
 const Tag = styled.div`
-  background-color: #e9ecef;
-  color: #495057;
+  background-color: rgba(255, 99, 71, 0.1);
+  color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
+  padding: 4px 8px;
   border-radius: 16px;
-  padding: 4px 10px;
-  font-size: 0.875rem;
+  font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 `;
 
 const RemoveTagButton = styled.button`
   background: none;
   border: none;
-  color: #6c757d;
-  font-size: 1rem;
+  color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
   cursor: pointer;
-  padding: 0;
-  line-height: 1;
+  font-size: 16px;
+  font-weight: bold;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+
+  &:hover {
+    background-color: rgba(255, 99, 71, 0.1);
+  }
 `;
+
+const SuggestionTags = styled.div`
+  margin-top: 12px;
+`;
+
+const SuggestionTag = styled.div`
+  background-color: #f0f0f0;
+  color: #555;
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+`;
+export default Noticias;
