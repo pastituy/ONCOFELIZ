@@ -15,6 +15,11 @@ import RegistroPaciente from "./pages/private/paciente";
 import Tratamientos from "./pages/private/tratamiento";
 import Recuperados from "./pages/private/donacionesCampa";
 import CancerNewsChat from "./pages/private/chat";
+import Redes from "./pages/private/redes";
+import Psicologo from "./pages/private/psicologo";
+import TrabajoSocial from "./pages/private/trabajadorSocial";
+import GastosMedicos from "./pages/private/gastoMedico";
+import ChatWidget from "./components/chatbotrasa";
 const theme = {
   colors: {
     primary: "#FF6347", // Coral color similar a la imagen
@@ -37,6 +42,7 @@ const theme = {
 function App() {
   return (
     <UserProvider>
+       <ChatWidget/>
       <ThemeProvider theme={theme}>
         {/*<Navbar />
       <HeroSection />
@@ -61,14 +67,21 @@ function App() {
               <Route path="/dasboard/donaciones" element={<Donaciones />} />
               <Route path="/dasboard/paciente" element={<RegistroPaciente />} />
               <Route path="/dasboard/tratamiento" element={<Tratamientos />} />
+              <Route path="/dasboard/psicologo" element={<Psicologo />} />
+              <Route
+                path="/dasboard/gastoMedico"
+                element={<GastosMedicos />}
+              />
+              <Route
+                path="/dasboard/trabajadorSocial"
+                element={<TrabajoSocial />}
+              />
               <Route
                 path="/dasboard/donaciones-campana"
                 element={<Recuperados />}
               />
-              <Route
-                path="/dasboard/chat"
-                element={<CancerNewsChat />}
-              />
+              <Route path="/dasboard/chat" element={<CancerNewsChat />} />{" "}
+              <Route path="/dasboard/redes" element={<Redes />} />
             </Route>
           </Routes>
         </BrowserRouter>

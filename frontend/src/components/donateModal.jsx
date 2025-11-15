@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { FaTimes, FaCheck, FaCreditCard, FaQrcode, FaPaypal, FaMoneyBillWave } from 'react-icons/fa';
+import { FaTimes, FaCheck, FaQrcode } from 'react-icons/fa';
 
 const DonateModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     nombreDonante: '',
     cantidad: '',
-    metodoPago: '',
+    metodoPago: 'qr',
     descripcion: ''
   });
   
@@ -15,10 +15,7 @@ const DonateModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState(null);
   
   const metodosDisponibles = [
-    { id: 'tarjeta', nombre: 'Tarjeta de Crédito/Débito', icon: <FaCreditCard /> },
-    { id: 'qr', nombre: 'Pago con QR', icon: <FaQrcode /> },
-    { id: 'paypal', nombre: 'PayPal', icon: <FaPaypal /> },
-    { id: 'transferencia', nombre: 'Transferencia Bancaria', icon: <FaMoneyBillWave /> }
+    { id: 'qr', nombre: 'Pago con QR', icon: <FaQrcode /> }
   ];
 
   const cantidadesSugeridas = ['100', '200', '500', '1000'];
@@ -50,7 +47,7 @@ const DonateModal = ({ isOpen, onClose }) => {
       setFormData({
         nombreDonante: '',
         cantidad: '',
-        metodoPago: '',
+        metodoPago: 'qr',
         descripcion: ''
       });
     } catch (err) {

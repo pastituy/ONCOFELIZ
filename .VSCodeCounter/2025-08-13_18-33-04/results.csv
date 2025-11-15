@@ -1,0 +1,43 @@
+"filename", "language", "JSON with Comments", "JavaScript", "TypeScript JSX", "TypeScript", "Markdown", "JSON", "comment", "blank", "total"
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\README.md", "Markdown", 0, 0, 0, 0, 31, 0, 0, 20, 51
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app.json", "JSON", 0, 0, 0, 0, 0, 42, 0, 1, 43
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\(tabs)\_layout.tsx", "TypeScript JSX", 0, 0, 109, 0, 0, 0, 0, 1, 110
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\(tabs)\calendario.tsx", "TypeScript JSX", 0, 0, 407, 0, 0, 0, 12, 36, 455
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\(tabs)\historial.tsx", "TypeScript JSX", 0, 0, 309, 0, 0, 0, 11, 30, 350
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\(tabs)\index.tsx", "TypeScript JSX", 0, 0, 185, 0, 0, 0, 5, 17, 207
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\(tabs)\perfil.tsx", "TypeScript JSX", 0, 0, 387, 0, 0, 0, 8, 30, 425
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\_layout.tsx", "TypeScript JSX", 0, 0, 24, 0, 0, 0, 2, 5, 31
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\chatbot.tsx", "TypeScript JSX", 0, 0, 467, 0, 0, 0, 13, 39, 519
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\configuracion.tsx", "TypeScript JSX", 0, 0, 821, 0, 0, 0, 12, 56, 889
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\historial-emocional.tsx", "TypeScript JSX", 0, 0, 311, 0, 0, 0, 5, 17, 333
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\index.tsx", "TypeScript JSX", 0, 0, 130, 0, 0, 0, 0, 12, 142
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\notificaciones.tsx", "TypeScript JSX", 0, 0, 362, 0, 0, 0, 39, 47, 448
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\Collapsible.tsx", "TypeScript JSX", 0, 0, 40, 0, 0, 0, 0, 6, 46
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ExternalLink.tsx", "TypeScript JSX", 0, 0, 20, 0, 0, 0, 2, 3, 25
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\HapticTab.tsx", "TypeScript JSX", 0, 0, 16, 0, 0, 0, 1, 2, 19
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\HelloWave.tsx", "TypeScript JSX", 0, 0, 34, 0, 0, 0, 0, 7, 41
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ParallaxScrollView.tsx", "TypeScript JSX", 0, 0, 76, 0, 0, 0, 0, 7, 83
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ThemedText.tsx", "TypeScript JSX", 0, 0, 55, 0, 0, 0, 0, 6, 61
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ThemedView.tsx", "TypeScript JSX", 0, 0, 10, 0, 0, 0, 0, 5, 15
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\chatbot.tsx", "TypeScript JSX", 0, 0, 154, 0, 0, 0, 1, 10, 165
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ui\IconSymbol.ios.tsx", "TypeScript JSX", 0, 0, 31, 0, 0, 0, 0, 2, 33
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ui\IconSymbol.tsx", "TypeScript JSX", 0, 0, 26, 0, 0, 0, 11, 5, 42
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ui\TabBarBackground.ios.tsx", "TypeScript JSX", 0, 0, 15, 0, 0, 0, 2, 3, 20
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ui\TabBarBackground.tsx", "TypeScript JSX", 0, 0, 4, 0, 0, 0, 1, 2, 7
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\constants\Colors.ts", "TypeScript", 0, 0, 0, 20, 0, 0, 4, 3, 27
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\context\userContext.tsx", "TypeScript JSX", 0, 0, 40, 0, 0, 0, 6, 11, 57
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\eslint.config.js", "JavaScript", 0, 8, 0, 0, 0, 0, 1, 2, 11
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\hooks\useColorScheme.ts", "TypeScript", 0, 0, 0, 1, 0, 0, 0, 1, 2
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\hooks\useColorScheme.web.ts", "TypeScript", 0, 0, 0, 13, 0, 0, 3, 6, 22
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\hooks\useThemeColor.ts", "TypeScript", 0, 0, 0, 14, 0, 0, 4, 4, 22
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\hooks\userPatientData.ts", "TypeScript", 0, 0, 0, 38, 0, 0, 0, 8, 46
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\package-lock.json", "JSON", 0, 0, 0, 0, 0, 12999, 0, 1, 13000
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\package.json", "JSON", 0, 0, 0, 0, 0, 51, 0, 1, 52
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\scripts\reset-project.js", "JavaScript", 0, 89, 0, 0, 0, 0, 10, 14, 113
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\style\styleCalendario.tsx", "TypeScript JSX", 0, 0, 293, 0, 0, 0, 0, 1, 294
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\style\styleHistoria.tsx", "TypeScript JSX", 0, 0, 111, 0, 0, 0, 0, 1, 112
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\style\styleIndex.tsx", "TypeScript JSX", 0, 0, 295, 0, 0, 0, 0, 1, 296
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\style\styleNotificacion.tsx", "TypeScript JSX", 0, 0, 192, 0, 0, 0, 1, 1, 194
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\style\stylePerfil.tsx", "TypeScript JSX", 0, 0, 171, 0, 0, 0, 0, 1, 172
+"c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\tsconfig.json", "JSON with Comments", 17, 0, 0, 0, 0, 0, 0, 1, 18
+"Total", "-", 17, 97, 5095, 86, 31, 13092, 154, 426, 18998

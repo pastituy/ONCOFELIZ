@@ -14,16 +14,31 @@ datasource db {
 }
 
 model Usuario {
-  id             Int              @id @default(autoincrement())
-  nombre         String
-  email          String           @unique
-  telefono       String
-  pais           String
-  password       String
-  creadoEn       DateTime         @default(now())
-  ci             String?
-  rol            String? //donante o voluntario(voluntario puede agregar eventos, campana y blog y responder blog)
-  usuarioCompana UsuarioCompana[]
+  id                   Int              @id @default(autoincrement())
+  nombre               String
+  email                String           @unique
+  telefono             String
+  pais                 String
+  password             String
+  creadoEn             DateTime         @default(now())
+  ci                   String?
+  rol                  String? //donante o voluntario(voluntario puede agregar eventos, campana y blog y responder blog)
+  usuarioCompana       UsuarioCompana[]
+  DerivacionesEnviadas Derivacion[]     @relation("ProfesionalDestino")
+  Derivacion           Derivacion[]
+}
+
+model GastoMedico {
+  id            Int      @id @default(autoincrement())
+  pacienteId    Int
+  concepto      String
+  montoTotal    Decimal
+  montoCubierto Decimal  @default(0)
+  montoFamilia  Decimal  @default(0)
+  fecha         DateTime @default(now())
+  observaciones String?
+  paciente      Paciente @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+  @@map("gastos_medicos")
 }
 
 model Donaciones {
@@ -40,23 +55,173 @@ model Padre {
   nombre    String
   apellido  String
   telefono  String
-  ci        String
+  ci        String     @unique
+  password  String?
   ubicacion String
   paciente  Paciente[]
 }
 
 model Paciente {
-  id            Int           @id @default(autoincrement())
-  nombre        String
-  apellido      String
-  ciudad        String
-  tipoCancer    String //manejar por le frontend los casos
-  edad          Int
-  idPadre       Int
-  padre         Padre         @relation(fields: [idPadre], references: [id])
-  fechaRegistro DateTime      @default(now())
-  Recuperados   Recuperados[]
-  Tratamiento   Tratamiento[]
+  id                       Int                        @id @default(autoincrement())
+  nombre                   String
+  apellido                 String
+  ciudad                   String
+  tipoCancer               String //manejar por le frontend los casos
+  edad                     Int
+  idPadre                  Int
+  padre                    Padre                      @relation(fields: [idPadre], references: [id])
+  fechaRegistro            DateTime                   @default(now())
+  Recuperados              Recuperados[]
+  Tratamiento              Tratamiento[]
+  Sesion                   Sesion[]
+  HistorialClinico         HistorialClinico[]
+  Cita                     Cita[]
+  ExpedienteSocial         ExpedienteSocial[]
+  Visita                   Visita[]
+  EvaluacionVulnerabilidad EvaluacionVulnerabilidad[]
+  DerivacionesEnviadas     Derivacion[]               @relation("BeneficiarioOrigen")
+  GastoMedico              GastoMedico[]
+}
+
+model ExpedienteSocial {
+  id                    Int                 @id @default(autoincrement())
+  beneficiarioId        Int
+  composicionFamiliar   Int
+  ingresosFamiliares    Decimal
+  condicionesVivienda   String?
+  observacionesSocioeco String?
+  nivelVulnerabilidad   NivelVulnerabilidad @default(BAJO)
+  fechaCreacion         DateTime            @default(now())
+  fechaActualizacion    DateTime            @updatedAt
+
+  // Relaciones
+  beneficiario Paciente @relation(fields: [beneficiarioId], references: [id], onDelete: Cascade)
+
+  @@map("expedientes_sociales")
+}
+
+model Visita {
+  id                   Int          @id @default(autoincrement())
+  beneficiarioId       Int
+  fechaVisita          DateTime
+  tipoVisita           TipoVisita
+  objetivo             String
+  observacionesEntorno String?
+  estado               EstadoVisita @default(PROGRAMADA)
+  proximaVisita        DateTime?
+  fechaCreacion        DateTime     @default(now())
+  fechaActualizacion   DateTime     @updatedAt
+
+  // Relaciones
+  beneficiario Paciente @relation(fields: [beneficiarioId], references: [id], onDelete: Cascade)
+
+  @@map("visitas")
+}
+
+model EvaluacionVulnerabilidad {
+  id                  Int                 @id @default(autoincrement())
+  beneficiarioId      Int
+  situacionEconomica  Int // 0-25
+  condicionesVivienda Int // 0-25
+  saludFamiliar       Int // 0-25
+  educacionDesarrollo Int // 0-25
+  puntajeTotal        Int // Calculado automáticamente
+  nivel               NivelVulnerabilidad
+  factoresRiesgo      String?
+  recomendaciones     String?
+  fechaEvaluacion     DateTime            @default(now())
+  fechaActualizacion  DateTime            @updatedAt
+
+  // Relaciones
+  beneficiario Paciente @relation(fields: [beneficiarioId], references: [id], onDelete: Cascade)
+
+  @@map("evaluaciones_vulnerabilidad")
+}
+
+model Profesional {
+  id                 Int      @id @default(autoincrement())
+  nombre             String
+  apellido           String
+  especialidad       String
+  telefono           String?
+  email              String?
+  activo             Boolean  @default(true)
+  fechaCreacion      DateTime @default(now())
+  fechaActualizacion DateTime @updatedAt
+
+  // Relaciones
+  @@map("profesionales")
+}
+
+model Derivacion {
+  id                   Int              @id @default(autoincrement())
+  beneficiarioId       Int
+  profesionalDestinoId Int
+  motivo               String
+  observaciones        String?
+  fechaDerivacion      DateTime         @default(now())
+  fechaSeguimiento     DateTime?
+  estado               EstadoDerivacion @default(PENDIENTE)
+  fechaCreacion        DateTime         @default(now())
+  fechaActualizacion   DateTime         @updatedAt
+
+  profesionalId      Int?
+  // Relaciones
+  beneficiario       Paciente @relation("BeneficiarioOrigen", fields: [beneficiarioId], references: [id], onDelete: Cascade)
+  profesionalDestino Usuario  @relation("ProfesionalDestino", fields: [profesionalDestinoId], references: [id])
+  Usuario            Usuario? @relation(fields: [usuarioId], references: [id])
+  usuarioId          Int?
+
+  @@map("derivaciones")
+}
+
+model Sesion {
+  id         Int          @id @default(autoincrement())
+  pacienteId Int
+  fecha      DateTime
+  hora       String
+  tipo       TipoSesion
+  estado     EstadoSesion
+  duracion   Int // en minutos
+  notas      String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  paciente Paciente @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+
+  @@map("sesiones")
+}
+
+model HistorialClinico {
+  id            Int               @id @default(autoincrement())
+  pacienteId    Int
+  diagnostico   String
+  fechaIngreso  DateTime
+  sesiones      Int               @default(0)
+  estado        EstadoTratamiento
+  observaciones String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  paciente Paciente @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+
+  @@map("historiales_clinicos")
+}
+
+model Cita {
+  id           Int              @id @default(autoincrement())
+  pacienteId   Int
+  fecha        DateTime
+  hora         String
+  tipo         TipoCita
+  estado       EstadoCita
+  recordatorio TipoRecordatorio
+  notas        String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  paciente     Paciente         @relation(fields: [pacienteId], references: [id], onDelete: Cascade)
+
+  @@map("citas")
 }
 
 model Recuperados {
@@ -72,14 +237,14 @@ model Recuperados {
 }
 
 model Tratamiento {
-  id              Int      @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())
   tipoTratamiento String
   descripcion     String
   idPaciente      Int?
   estado          Boolean //si esta activo o no 
-  fecha           DateTime @default(now())
+  fecha           DateTime  @default(now())
   siguienteCita   DateTime
-  paciente   Paciente? @relation(fields: [idPaciente], references: [id])
+  paciente        Paciente? @relation(fields: [idPaciente], references: [id])
 }
 
 model Evento {
@@ -87,7 +252,6 @@ model Evento {
   titulo      String
   descripcion String
   fecha       String
-  img         String
   ubicacion   String
 }
 
@@ -161,4 +325,70 @@ model respuesta {
   respuesta    String
   idComentario Int
   comentario   Comentarios @relation(fields: [idComentario], references: [id])
+}
+
+enum TipoSesion {
+  INDIVIDUAL
+  GRUPAL
+  FAMILIAR
+}
+
+enum EstadoSesion {
+  PROGRAMADA
+  COMPLETADA
+  CANCELADA
+  PENDIENTE
+}
+
+enum EstadoTratamiento {
+  EN_TRATAMIENTO
+  COMPLETADO
+  SUSPENDIDO
+  INACTIVO
+}
+
+enum TipoCita {
+  CONSULTA
+  SEGUIMIENTO
+  EVALUACION
+}
+
+enum EstadoCita {
+  PROGRAMADA
+  CONFIRMADA
+  COMPLETADA
+  CANCELADA
+  PENDIENTE
+}
+
+enum TipoRecordatorio {
+  RECORDATORIO_24H
+  RECORDATORIO_1H
+  LLAMAR_CONFIRMAR
+  SIN_RECORDATORIO
+}
+
+enum NivelVulnerabilidad {
+  BAJO
+  MEDIO
+  ALTO
+}
+
+enum TipoVisita {
+  DOMICILIARIA
+  SEGUIMIENTO
+  ENTREVISTA
+  EVALUACION
+}
+
+enum EstadoVisita {
+  PROGRAMADA
+  COMPLETADA
+  CANCELADA
+}
+
+enum EstadoDerivacion {
+  PENDIENTE
+  COMPLETADA
+  CANCELADA
 }

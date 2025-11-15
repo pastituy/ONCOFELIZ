@@ -5,6 +5,7 @@ import { PiMicrosoftExcelLogoFill } from "react-icons/pi";
 import { IoCloseOutline } from "react-icons/io5";
 import Table from "../../../components/ui/table";
 import toast from "react-hot-toast";
+import ExportButtons from "../../../components/ui/ExportButtons";
 
 const Recuperados = () => {
   const [showModal, setShowModal] = useState(false);
@@ -163,17 +164,13 @@ const Recuperados = () => {
       <TopSection>
         <DateFile>
           <LoginButton onClick={openModal}>Agregar</LoginButton>
-          <ButtonExcel onClick={exportToExcel}>
-            <PiMicrosoftExcelLogoFill
-              color="#2ba84a"
-              style={{ fontSize: "1.4rem" }}
-            />
-            Excel
-          </ButtonExcel>
-          <ButtonPDF onClick={exportToPDF}>
-            <FaRegFilePdf color="#f25c54" style={{ fontSize: "1rem" }} />
-            PDF
-          </ButtonPDF>
+            <ExportButtons
+            data={dataRecuperados}
+            columns={columns}
+            fileName="recuperados"
+            title="Reporte de recuperados"
+            sheetName="Recuperados"
+          />
         </DateFile>
       </TopSection>
 

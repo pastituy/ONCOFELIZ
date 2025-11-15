@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { IoSend } from "react-icons/io5";
 import toast from "react-hot-toast";
 import BlogPreview from "./components/blogPreview";
+
 const API_KEY =
-  "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";
+  "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";
 
 const CancerNewsChat = () => {
   const [question, setQuestion] = useState("");
@@ -13,42 +14,151 @@ const CancerNewsChat = () => {
     return saved ? JSON.parse(saved) : [];
   });
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     localStorage.setItem("cancer-chat", JSON.stringify(responses));
   }, [responses]);
-  const handleSend = async () => {
-    if (!question.trim()) return;
-    setLoading(true);
+
+  const crearRecurso = async (tipo, data) => {
+    const url =
+      tipo === "evento"
+        ? "http://localhost:3000/evento"
+        : "http://localhost:3000/campana";
+
+    console.log("Enviando POST a:", url);
+    console.log("Datos enviados:", data);
 
     try {
-      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      const res = await fetch(url, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${API_KEY}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": "http://localhost:5173",
-        },
-        body: JSON.stringify({
-          model: "openai/gpt-3.5-turbo",
-          messages: [
-            {
-              role: "system",
-              content:
-                "Eres un asistente útil que responde preguntas sobre el cáncer en lo niños, eres de OncoFeliz eso se llama la organizacion, pero solo el cáncer si te hacen cualquier otra pregunta no relacionada no respondes y dices que eres un sistente de cáncer. Si el usuario dice 'hazme un blog' o algo similar, responde solo con un objeto JavaScript con la siguiente estructura (sin explicación ni texto adicional): titulo: '', excerpt: '', autor: '', idCategoria: '', tags: [], contenidos: titulo: '', texto: '', orden: 0 ",
-            },
-            { role: "user", content: question },
-          ],
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
 
-      const data = await res.json();
-      if (!data.choices) {
-        toast.error("No se obtuvo respuesta del modelo.");
-        return;
+      if (!res.ok) throw new Error(`No se pudo crear el ${tipo}`);
+      toast.success(
+        `${tipo.charAt(0).toUpperCase() + tipo.slice(1)} creado correctamente`
+      );
+    } catch (error) {
+      console.error("Error al crear recurso:", error);
+      toast.error(`Error al crear ${tipo}`);
+    }
+  };
+
+  const publicarEnFacebook = async (data) => {
+    const url = "http://localhost:3000/api/facebook/publish";
+
+    console.log("Enviando POST a Facebook:", url);
+    console.log("Datos de publicación:", data);
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) throw new Error("No se pudo publicar en Facebook");
+
+      const result = await res.json();
+      toast.success("¡Publicación enviada a Facebook exitosamente!");
+      return result;
+    } catch (error) {
+      console.error("Error al publicar en Facebook:", error);
+      toast.error("Error al publicar en Facebook");
+      throw error;
+    }
+  };
+
+ const handleSend = async () => {
+  if (!question.trim()) return;
+  setLoading(true);
+
+  try {
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:5173",
+      },
+      body: JSON.stringify({
+        model: "openai/chatgpt-4o-latest",
+        max_tokens: 500, // 👈 Limitar respuesta para evitar error de créditos
+        messages: [
+          {
+            role: "system",
+            content:
+              'Eres un asistente útil que responde preguntas sobre el cáncer en los niños. Puedes crear eventos, campañas y publicaciones de Facebook.\n\nSi el usuario dice \'crea un evento\' o \'crea una campaña\', responde solo con un objeto JSON válido:\n\nEVENTO:\n{\n  "titulo": "",\n  "descripcion": "",\n  "fecha": "",\n  "ubicacion": ""\n}\n\nCAMPAÑA:\n{\n  "titulo": "",\n  "descripcion": "",\n  "multimedia": "",\n  "fecha": "",\n  "recaudado": 0,\n  "previstro": 0\n}\n\nPUBLICACIÓN FACEBOOK:\nSi el usuario menciona "publica en facebook", "post en facebook", "comparte en facebook" o similar, responde SOLO con un objeto JSON:\n{\n  "type": "facebook_post",\n  "title": "título opcional",\n  "message": "mensaje principal de la publicación",\n  "imageUrl": "URL de imagen si se proporciona",\n  "link": "URL del enlace si se proporciona"\n}\n\nExtrae la información del mensaje del usuario para completar los campos.',
+          },
+          { role: "user", content: question },
+        ],
+      }),
+    });
+
+    const data = await res.json();
+    if (!data.choices) {
+      toast.error("No se obtuvo respuesta del modelo.");
+      return;
+    }
+
+    const botMessage = data.choices[0].message.content.trim();
+
+    let parsed;
+    let tipo = "";
+
+    try {
+      parsed = JSON.parse(botMessage);
+      if (parsed.type === "facebook_post") {
+        await publicarEnFacebook({
+          title: parsed.title || "",
+          message: parsed.message || "",
+          imageUrl: parsed.imageUrl || "",
+          link: parsed.link || "",
+        });
+        tipo = "publicación de Facebook";
+
+        setResponses((prev) => [
+          ...prev,
+          {
+            user: question,
+            results: [
+              `✅ La publicación ha sido enviada a Facebook exitosamente!\n\n📝 Mensaje: ${
+                parsed.message
+              }\n${parsed.imageUrl ? `🖼️ Imagen: ${parsed.imageUrl}\n` : ""}${
+                parsed.link ? `🔗 Enlace: ${parsed.link}` : ""
+              }`,
+            ],
+          },
+        ]);
+      } else if (parsed.ubicacion) {
+        await crearRecurso("evento", parsed);
+        tipo = "evento";
+        setResponses((prev) => [
+          ...prev,
+          {
+            user: question,
+            results: [`✅ El evento ha sido creado correctamente.`],
+          },
+        ]);
+      } else if (
+        typeof parsed.recaudado === "number" &&
+        typeof parsed.previstro === "number"
+      ) {
+        await crearRecurso("campana", parsed);
+        tipo = "campaña";
+        setResponses((prev) => [
+          ...prev,
+          {
+            user: question,
+            results: [
+              `✅ La campaña ha sido creada correctamente. Agregue la imagen por el formulario.`,
+            ],
+          },
+        ]);
       }
-
-      const botMessage = data.choices[0].message.content;
-
+    } catch (e) {
+      console.error("Error al parsear JSON:", e);
       setResponses((prev) => [
         ...prev,
         {
@@ -56,130 +166,422 @@ const CancerNewsChat = () => {
           results: [botMessage],
         },
       ]);
-      setQuestion("");
-    } catch (error) {
-      console.error(error);
-      toast.error("Error al obtener la respuesta.");
-    } finally {
-      setLoading(false);
     }
-  };
+
+    setQuestion("");
+  } catch (error) {
+    console.error(error);
+    toast.error("Error al obtener la respuesta.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Container>
-      <ChatBox>
-        {responses.map((entry, idx) => (
-          <ChatEntry key={idx}>
-            <UserMessage>🧑 {entry.user}</UserMessage>
-            <BotResponse>
-              {entry.results.map((text, i) => {
-                let parsed;
-                try {
-                  parsed = JSON.parse(text);
-                } catch (_) {}
+      <Header>
+        <Title>Asistente de Cáncer Infantil</Title>
+        <Subtitle>Sistema de gestión y consultas médicas</Subtitle>
+        <CardTitle>Funcionalidades</CardTitle>
+        <FeatureList>
+          <FeatureItem>
+            <FeatureIcon>📚</FeatureIcon>
+            <FeatureText>Consultas médicas</FeatureText>
+          </FeatureItem>
+          <FeatureItem>
+            <FeatureIcon>📅</FeatureIcon>
+            <FeatureText>Eventos médicos</FeatureText>
+          </FeatureItem>
+          <FeatureItem>
+            <FeatureIcon>🎯</FeatureIcon>
+            <FeatureText>Campañas de salud</FeatureText>
+          </FeatureItem>
+          <FeatureItem>
+            <FeatureIcon>📱</FeatureIcon>
+            <FeatureText>Redes sociales</FeatureText>
+          </FeatureItem>
+        </FeatureList>
+      </Header>
 
-                return (
-                  <BotMessage key={i}>
-                    {parsed && parsed.titulo && parsed.contenidos ? (
-                      <BlogPreview blog={parsed} />
-                    ) : (
-                      text
-                    )}
-                  </BotMessage>
-                );
-              })}
-            </BotResponse>
-          </ChatEntry>
-        ))}
-        {loading && <Loading>✍️ Pensando respuesta...</Loading>}
-      </ChatBox>
+      <Sidebar></Sidebar>
 
-      <InputBar>
-        <input
-          type="text"
-          placeholder="¿Qué quieres saber sobre el cáncer?"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
-        />
-        <SendButton onClick={handleSend}>
-          <IoSend size={20} />
-        </SendButton>
-      </InputBar>
+      <ChatContainer>
+        <ChatBox>
+          {responses.map((entry, idx) => (
+            <ChatEntry key={idx}>
+              <UserMessage>
+                <MessageHeader>
+                  <Avatar>👤</Avatar>
+                  <MessageLabel>Usuario</MessageLabel>
+                </MessageHeader>
+                <MessageContent>{entry.user}</MessageContent>
+              </UserMessage>
+
+              <BotMessage>
+                <MessageHeader>
+                  <Avatar>🤖</Avatar>
+                  <MessageLabel>Asistente</MessageLabel>
+                </MessageHeader>
+                <BotResponse>
+                  {entry.results.map((text, i) => {
+                    let parsed;
+                    try {
+                      parsed = JSON.parse(text);
+                    } catch (_) {}
+
+                    return (
+                      <MessageContent key={i}>
+                        {parsed && parsed.titulo && parsed.contenidos ? (
+                          <BlogPreview blog={parsed} />
+                        ) : (
+                          <ResponseText>{text}</ResponseText>
+                        )}
+                      </MessageContent>
+                    );
+                  })}
+                </BotResponse>
+              </BotMessage>
+            </ChatEntry>
+          ))}
+          {loading && (
+            <LoadingMessage>
+              <MessageHeader>
+                <Avatar>🤖</Avatar>
+                <MessageLabel>Asistente</MessageLabel>
+              </MessageHeader>
+              <LoadingText>Procesando su solicitud...</LoadingText>
+            </LoadingMessage>
+          )}
+        </ChatBox>
+      </ChatContainer>
+
+      <ExamplesSection>
+        <SectionTitle>Comandos</SectionTitle>
+        <ExamplesGrid>
+          <ExampleCard
+            onClick={() =>
+              setQuestion(
+                "publica en facebook: ¡Nuevo artículo sobre prevención del cáncer infantil!"
+              )
+            }
+          >
+            <ExampleIcon>📱</ExampleIcon>
+            <ExampleTitle>Post simple</ExampleTitle>
+          </ExampleCard>
+
+          <ExampleCard
+            onClick={() =>
+              setQuestion(
+                "publica en facebook: Infografía sobre síntomas https://imagen.com/infografia.jpg https://miweb.com/articulo"
+              )
+            }
+          >
+            <ExampleIcon>🖼️</ExampleIcon>
+            <ExampleTitle>Con media</ExampleTitle>
+          </ExampleCard>
+
+          <ExampleCard onClick={() => setQuestion("crea un evento")}>
+            <ExampleIcon>📅</ExampleIcon>
+            <ExampleTitle>Crear evento</ExampleTitle>
+          </ExampleCard>
+
+          <ExampleCard onClick={() => setQuestion("crea una campaña")}>
+            <ExampleIcon>🎯</ExampleIcon>
+            <ExampleTitle>Nueva campaña</ExampleTitle>
+          </ExampleCard>
+        </ExamplesGrid>
+      </ExamplesSection>
+
+      <InputSection>
+        <InputContainer>
+          <InputField
+            type="text"
+            placeholder="Escriba su consulta o comando..."
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          />
+          <SendButton onClick={handleSend} disabled={loading}>
+            <IoSend size={18} />
+          </SendButton>
+        </InputContainer>
+      </InputSection>
     </Container>
   );
 };
 
 export default CancerNewsChat;
 
+// Styled Components
 const Container = styled.div`
-  padding: 20px;
-  max-width: 700px;
-  margin: auto;
+  width: 100%;
+  height: 100vh;
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, sans-serif;
+  background-color: #fafafa;
+  display: grid;
+  grid-template-columns: 320px 1fr 280px;
+  grid-template-rows: auto 1fr auto;
+  gap: 16px;
+  grid-template-areas:
+    "header header header"
+    "sidebar chat examples"
+    "input input input";
+  overflow: hidden;
 `;
 
-const ChatBox = styled.div`
+const Header = styled.header`
+  text-align: center;
+  margin-bottom: 32px;
+`;
+
+const Title = styled.h1`
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+`;
+
+const Subtitle = styled.p`
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+  font-weight: 400;
+`;
+
+const WelcomeCard = styled.div`
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+`;
+
+const CardTitle = styled.h3`
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+`;
+
+const FeatureList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  max-height: 500px;
-  overflow-y: auto;
-  margin-bottom: 20px;
+  gap: 12px;
 `;
 
-const ChatEntry = styled.div`
-  background: #f9f9f9;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
-`;
-
-const UserMessage = styled.div`
-  font-weight: bold;
-  color: #444;
-  margin-bottom: 10px;
-`;
-
-const BotResponse = styled.div`
+const FeatureItem = styled.div`
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 10px;
 `;
 
-const BotMessage = styled.div`
-  background: #eaf3ff;
-  padding: 10px;
-  border-radius: 6px;
-  color: #333;
-  font-size: 14px;
+const FeatureIcon = styled.span`
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
 `;
 
-const InputBar = styled.div`
+const FeatureText = styled.span`
+  font-size: 13px;
+  color: #333;
+  font-weight: 400;
+`;
+
+const ChatContainer = styled.div`
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+`;
+
+const ChatBox = styled.div`
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 20px;
+`;
+
+const ChatEntry = styled.div`
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const MessageHeader = styled.div`
   display: flex;
-  border: 1px solid #ccc;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+`;
+
+const Avatar = styled.span`
+  font-size: 16px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const MessageLabel = styled.span`
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+const UserMessage = styled.div`
+  margin-bottom: 16px;
+`;
+
+const BotMessage = styled.div``;
+
+const MessageContent = styled.div`
+  font-size: 15px;
+  line-height: 1.5;
+  color: #333;
+  margin-left: 32px;
+`;
+
+const BotResponse = styled.div`
+  margin-left: 32px;
+`;
+
+const ResponseText = styled.pre`
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #333;
+  margin: 0;
+  background: #f8f9fa;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border-left: 3px solid #ff6347;
+`;
+
+const LoadingMessage = styled.div`
+  margin-bottom: 24px;
+`;
+
+const LoadingText = styled.div`
+  font-size: 15px;
+  color: #666;
+  font-style: italic;
+  margin-left: 32px;
+`;
+
+const InputSection = styled.div`
+  margin-bottom: 24px;
+`;
+
+const InputContainer = styled.div`
+  display: flex;
+  border: 1px solid #d0d7de;
   border-radius: 6px;
   overflow: hidden;
 
-  input {
-    flex: 1;
-    border: none;
-    padding: 10px;
-    outline: none;
+  &:focus-within {
+    border-color: #ff6347;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+  }
+`;
+
+const InputField = styled.input`
+  flex: 1;
+  border: none;
+  padding: 14px 16px;
+  font-size: 15px;
+  outline: none;
+  background: transparent;
+
+  &::placeholder {
+    color: #8c959f;
   }
 `;
 
 const SendButton = styled.button`
-  background-color: ${(props) => props.theme?.colors?.primary || "#FF6347"};
+  background-color: #ff6347;
   border: none;
-  padding: 0 15px;
+  padding: 14px 18px;
   color: white;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  cursor: pointer;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    opacity: 0.8;
+  }
+
+  &:disabled {
+    background-color: #adb5bd;
+    cursor: not-allowed;
+  }
 `;
 
-const Loading = styled.div`
-  color: #888;
-  font-size: 14px;
-  font-style: italic;
+const ExamplesSection = styled.div`
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+`;
+
+const SectionTitle = styled.h3`
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+`;
+
+const ExamplesGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const ExampleCard = styled.div`
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e9ecef;
+    border-color: #ff6347;
+    transform: translateX(2px);
+  }
+`;
+
+const ExampleIcon = styled.div`
+  font-size: 16px;
+  margin-bottom: 4px;
+`;
+
+const ExampleTitle = styled.div`
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+`;
+
+const Sidebar = styled.div`
+  grid-area: sidebar;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  overflow-y: auto;
+  background: transparent;
 `;

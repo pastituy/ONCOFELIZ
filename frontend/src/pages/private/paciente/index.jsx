@@ -179,6 +179,10 @@ const Pacientes = () => {
       acceso: "apellido",
     },
     {
+      header: "Telefono",
+      acceso: "padreTelefono",
+    },
+    {
       header: "Ciudad",
       acceso: "ciudad",
     },

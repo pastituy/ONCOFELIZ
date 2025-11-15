@@ -4,16 +4,20 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { HiOutlineLogout } from "react-icons/hi";
 import { useUser } from "../context/userContext";
 import toast from "react-hot-toast";
-import { FaNewspaper } from "react-icons/fa6";
+import { FaBrain, FaNewspaper } from "react-icons/fa6";
 import { FaUserPlus } from "react-icons/fa6";
 import { FaMoneyBill } from "react-icons/fa6";
-import { FaUserAlt } from "react-icons/fa";
+import { FaInternetExplorer, FaUserAlt } from "react-icons/fa";
+import { HiChat } from "react-icons/hi";
 import { PiTreePalmThin } from "react-icons/pi";
+import { IoCodeWorking } from "react-icons/io5";
+
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const { logout } = useUser();
+  const { logout, user } = useUser();
+
   const handleNavigation = (path) => {
     navigate(path);
   };
@@ -21,11 +25,196 @@ const Sidebar = () => {
   const handleLogout = () => {
     logout();
     navigate("/login");
-    toast.success("Salio del sistema");
+    toast.success("Salió del sistema");
   };
+
   const isActive = (path) => {
     return location.pathname === path;
   };
+
+  // Configuración de navegación por roles
+  const getNavigationItems = () => {
+    const baseItems = {
+      // Items para Admin - acceso completo
+      admin: [
+        {
+          path: "/dasboard/eventos",
+          icon: <EventIcon />,
+          text: "Eventos",
+        },
+        {
+          path: "/dasboard/campana",
+          icon: <CampaignIcon />,
+          text: "Campañas",
+        },
+        {
+          path: "/dasboard/noticias",
+          icon: <FaNewspaper />,
+          text: "Noticias",
+        },
+        {
+          path: "/dasboard/usuario",
+          icon: <FaUserPlus />,
+          text: "Usuarios",
+        },
+        {
+          path: "/dasboard/donaciones",
+          icon: <FaMoneyBill />,
+          text: "Donaciones",
+        },
+        {
+          path: "/dasboard/paciente",
+          icon: <FaUserAlt />,
+          text: "Pacientes",
+        },
+        {
+          path: "/dasboard/tratamiento",
+          icon: <PiTreePalmThin />,
+          text: "Tratamientos",
+        },
+        {
+          path: "/dasboard/donaciones-campana",
+          icon: <FaMoneyBill />,
+          text: "Recuperados",
+        },
+        {
+          path: "/dasboard/chat",
+          icon: <HiChat />,
+          text: "Chat",
+        },
+        {
+          path: "/dasboard/redes",
+          icon: <FaInternetExplorer />,
+          text: "Redes Sociales",
+        },
+        {
+          path: "/dasboard/psicologo",
+          icon: <FaBrain />,
+          text: "Historial Psicológico",
+        },
+        {
+          path: "/dasboard/trabajadorSocial",
+          icon: <IoCodeWorking />,
+          text: "Trabajo Social",
+        },
+      ],
+
+      // Items para Psicólogo
+      psicologo: [
+        {
+          path: "/dasboard/paciente",
+          icon: <FaUserAlt />,
+          text: "Mis Pacientes",
+        },
+        {
+          path: "/dasboard/psicologo",
+          icon: <FaBrain />,
+          text: "Historial Psicológico",
+        },
+        {
+          path: "/dasboard/tratamiento",
+          icon: <PiTreePalmThin />,
+          text: "Tratamientos",
+        },
+       /*  {
+          path: "/dasboard/chat",
+          icon: <HiChat />,
+          text: "Chat con Pacientes",
+        } */
+      ],
+
+      // Items para Trabajador Social
+      trabajadorSocial: [
+        {
+          path: "/dasboard/paciente",
+          icon: <FaUserAlt />,
+          text: "Pacientes Asignados",
+        },
+        {
+          path: "/dasboard/tratamiento",
+          icon: <PiTreePalmThin />,
+          text: "Tratamientos",
+        },
+        {
+          path: "/dasboard/trabajadorSocial",
+          icon: <IoCodeWorking />,
+          text: "Casos Sociales",
+        },
+        {
+          path: "/dasboard/gastoMedico",
+          icon: <FaMoneyBill />,
+          text: "Gestión Donaciones",
+        },
+        {
+          path: "/dasboard/donaciones-campana",
+          icon: <FaMoneyBill />,
+          text: "Seguimiento Ayudas",
+        },
+        {
+          path: "/dasboard/chat",
+          icon: <HiChat />,
+          text: "Chat",
+        },
+        {
+          path: "/dasboard/eventos",
+          icon: <EventIcon />,
+          text: "Eventos Sociales",
+        },
+        {
+          path: "/dasboard/redes",
+          icon: <FaInternetExplorer />,
+          text: "Redes de Apoyo",
+        },
+      ],
+
+      // Items para Médico (si lo tienes)
+      medico: [
+        {
+          path: "/dasboard/paciente",
+          icon: <FaUserAlt />,
+          text: "Mis Pacientes",
+        },
+        {
+          path: "/dasboard/tratamiento",
+          icon: <PiTreePalmThin />,
+          text: "Tratamientos",
+        },
+        {
+          path: "/dasboard/psicologo",
+          icon: <FaBrain />,
+          text: "Historial Médico",
+        },
+        {
+          path: "/dasboard/chat",
+          icon: <HiChat />,
+          text: "Consultas",
+        },
+      ],
+
+      // Items para Voluntario
+      voluntario: [
+        {
+          path: "/dasboard/eventos",
+          icon: <EventIcon />,
+          text: "Eventos",
+        },
+        {
+          path: "/dasboard/chat",
+          icon: <HiChat />,
+          text: "Chat",
+        },
+        {
+          path: "/dasboard/noticias",
+          icon: <FaNewspaper />,
+          text: "Noticias",
+        },
+      ],
+    };
+
+    return baseItems[user?.rol] || baseItems.admin;
+  };
+
+  const navigationItems = getNavigationItems();
 
   return (
     <SidebarContainer collapsed={collapsed}>
@@ -36,98 +225,30 @@ const Sidebar = () => {
         {!collapsed && <BrandName>OncoFeliz</BrandName>}
       </LogoContainer>
 
-      <NavMenu>
-        <NavItem
-          active={isActive("/dasboard/eventos")}
-          onClick={() => handleNavigation("/dasboard/eventos")}
-        >
-          <NavIconWrapper active={isActive("/dasboard/eventos")}>
-            <EventIcon />
-          </NavIconWrapper>
-          {!collapsed && <NavText>Eventos</NavText>}
-          {!collapsed && isActive("/dasboard/eventos") && <ActiveIndicator />}
-        </NavItem>
+      {/* Mostrar información del usuario */}
+      {!collapsed && user && (
+        <UserInfoSection>
+          <UserInfoText>
+            <UserInfoName>{user.nombre}</UserInfoName>
+            <UserInfoRole>{user.rol?.toUpperCase()}</UserInfoRole>
+          </UserInfoText>
+        </UserInfoSection>
+      )}
 
-        <NavItem
-          active={isActive("/dasboard/campana")}
-          onClick={() => handleNavigation("/dasboard/campana")}
-        >
-          <NavIconWrapper active={isActive("/dasboard/campana")}>
-            <CampaignIcon />
-          </NavIconWrapper>
-          {!collapsed && <NavText>Campañas</NavText>}
-          {!collapsed && isActive("/dasboard/campana") && <ActiveIndicator />}
-        </NavItem>
-        <NavItem
-          active={isActive("/dasboard/noticias")}
-          onClick={() => handleNavigation("/dasboard/noticias")}
-        >
-          <NavIconWrapper active={isActive("/dasboard/noticias")}>
-            <FaNewspaper />
-          </NavIconWrapper>
-          {!collapsed && <NavText>Noticias</NavText>}
-          {!collapsed && isActive("/dasboard/noticias") && <ActiveIndicator />}
-        </NavItem>
-        <NavItem
-          active={isActive("/dasboard/usuario")}
-          onClick={() => handleNavigation("/dasboard/usuario")}
-        >
-          <NavIconWrapper active={isActive("/dasboard/usuario")}>
-            <FaUserPlus />
-          </NavIconWrapper>
-          {!collapsed && <NavText>Usuario</NavText>}
-          {!collapsed && isActive("/dasboard/usuario") && <ActiveIndicator />}
-        </NavItem>
-        <NavItem
-          active={isActive("/dasboard/donaciones")}
-          onClick={() => handleNavigation("/dasboard/donaciones")}
-        >
-          <NavIconWrapper active={isActive("/dasboard/donaciones")}>
-            <FaMoneyBill />
-          </NavIconWrapper>
-          {!collapsed && <NavText>Donaciones</NavText>}
-          {!collapsed && isActive("/dasboard/donaciones") && <ActiveIndicator />}
-        </NavItem>
-        <NavItem
-          active={isActive("/dasboard/paciente")}
-          onClick={() => handleNavigation("/dasboard/paciente")}
-        >
-          <NavIconWrapper active={isActive("/dasboard/paciente")}>
-            <FaUserAlt />
-          </NavIconWrapper>
-          {!collapsed && <NavText>Pacientes</NavText>}
-          {!collapsed && isActive("/dasboard/paciente") && <ActiveIndicator />}
-        </NavItem>
-        <NavItem
-          active={isActive("/dasboard/tratamiento")}
-          onClick={() => handleNavigation("/dasboard/tratamiento")}
-        >
-          <NavIconWrapper active={isActive("/dasboard/tratamiento")}>
-            <PiTreePalmThin />
-          </NavIconWrapper>
-          {!collapsed && <NavText>Tratamiento</NavText>}
-          {!collapsed && isActive("/dasboard/tratamiento") && <ActiveIndicator />}
-        </NavItem>
-        <NavItem
-          active={isActive("/dasboard/donaciones-campana")}
-          onClick={() => handleNavigation("/dasboard/donaciones-campana")}
-        >
-          <NavIconWrapper active={isActive("/dasboard/donaciones-campana")}>
-            <FaMoneyBill />
-          </NavIconWrapper>
-          {!collapsed && <NavText>Recuperados</NavText>}
-          {!collapsed && isActive("/dasboard/donaciones-campana") && <ActiveIndicator />}
-        </NavItem>
-        <NavItem
-          active={isActive("/dasboard/chat")}
-          onClick={() => handleNavigation("/dasboard/chat")}
-        >
-          <NavIconWrapper active={isActive("/dasboard/chat")}>
-            <FaMoneyBill />
-          </NavIconWrapper>
-          {!collapsed && <NavText>Chat</NavText>}
-          {!collapsed && isActive("/dasboard/chat") && <ActiveIndicator />}
-        </NavItem>
+      <NavMenu>
+        {navigationItems.map((item, index) => (
+          <NavItem
+            key={index}
+            active={isActive(item.path)}
+            onClick={() => handleNavigation(item.path)}
+          >
+            <NavIconWrapper active={isActive(item.path)}>
+              {item.icon}
+            </NavIconWrapper>
+            {!collapsed && <NavText>{item.text}</NavText>}
+            {!collapsed && isActive(item.path) && <ActiveIndicator />}
+          </NavItem>
+        ))}
       </NavMenu>
 
       <UserSection onClick={handleLogout}>
@@ -142,7 +263,7 @@ const Sidebar = () => {
           />
         </UserAvatar>
         <UserInfo>
-          <UserName>Salir</UserName>
+          <UserName>Cerrar Sesión</UserName>
         </UserInfo>
       </UserSection>
     </SidebarContainer>
@@ -151,6 +272,7 @@ const Sidebar = () => {
 
 export default Sidebar;
 
+// Componentes de iconos personalizados
 const EventIcon = () => (
   <svg
     width="20"
@@ -257,6 +379,7 @@ const CampaignIcon = () => (
   </svg>
 );
 
+// Styled Components
 const SidebarContainer = styled.div`
   width: 250px;
   height: 100vh;
@@ -264,7 +387,6 @@ const SidebarContainer = styled.div`
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-
   left: 0;
   top: 0;
   z-index: 100;
@@ -274,8 +396,8 @@ const SidebarContainer = styled.div`
 const LogoContainer = styled.div`
   display: flex;
   align-items: center;
-  padding: 2rem 1.5rem;
-  margin-bottom: 1rem;
+  padding: 1rem 1rem;
+  margin-bottom: 0.5rem;
 `;
 
 const LogoWrapper = styled.div`
@@ -310,10 +432,38 @@ const BrandName = styled.h2`
   letter-spacing: -0.5px;
 `;
 
+const UserInfoSection = styled.div`
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+`;
+
+const UserInfoText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+const UserInfoName = styled.span`
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2d3748;
+`;
+
+const UserInfoRole = styled.span`
+  font-size: 0.75rem;
+  color: #ff6347;
+  font-weight: 500;
+  background-color: rgba(255, 99, 71, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  width: fit-content;
+`;
+
 const NavMenu = styled.ul`
   list-style: none;
   padding: 0 1rem;
-  margin: 1rem 0;
+  margin: 0.5rem 0;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -411,9 +561,4 @@ const UserName = styled.span`
   font-size: 0.9rem;
   font-weight: 600;
   color: #2d3748;
-`;
-
-const UserRole = styled.span`
-  font-size: 0.8rem;
-  color: #718096;
 `;

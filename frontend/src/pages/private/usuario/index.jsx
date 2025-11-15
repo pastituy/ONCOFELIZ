@@ -5,6 +5,7 @@ import { PiMicrosoftExcelLogoFill } from "react-icons/pi";
 import { IoCloseOutline } from "react-icons/io5";
 import Table from "../../../components/ui/table";
 import toast from "react-hot-toast";
+import ExportButtons from "../../../components/ui/ExportButtons";
 
 const Usuarios = () => {
   const [showModal, setShowModal] = useState(false);
@@ -95,7 +96,8 @@ const Usuarios = () => {
         headers: { "Content-Type": "application/json" },
       });
       const data = await response.json();
-      if (!response.ok) return toast.error(data.mensaje || "Error al eliminar usuario");
+      if (!response.ok)
+        return toast.error(data.mensaje || "Error al eliminar usuario");
       getData();
       toast.success(data.mensaje);
     } catch (error) {
@@ -137,24 +139,36 @@ const Usuarios = () => {
     { header: "CI", acceso: "ci" },
     { header: "Rol", acceso: "rol" },
   ];
+  const handleExportStart = (type) => {
+    console.log(`Iniciando exportación: ${type}`);
+  };
 
+  const handleExportEnd = (type) => {
+    console.log(`Exportación completada: ${type}`);
+  };
   return (
     <Container>
       <TopSection>
         <DateFile>
           <LoginButton onClick={openModal}>Agregar</LoginButton>
-          <ButtonExcel onClick={exportToExcel}>
-            <PiMicrosoftExcelLogoFill color="#2ba84a" style={{ fontSize: "1.4rem" }} />
-            Excel
-          </ButtonExcel>
-          <ButtonPDF onClick={exportToPDF}>
-            <FaRegFilePdf color="#f25c54" style={{ fontSize: "1rem" }} />
-            PDF
-          </ButtonPDF>
+          <ExportButtons
+            data={usuarios}
+            columns={columns}
+            fileName="usuarios"
+            title="Reporte de usuarios"
+            sheetName="Usuarios"
+            onExportStart={handleExportStart}
+            onExportEnd={handleExportEnd}
+          />
         </DateFile>
       </TopSection>
 
-      <Table columns={columns} data={usuarios} onDelete={eliminarUsuario} onEdit={editarUsuario} />
+      <Table
+        columns={columns}
+        data={usuarios}
+        onDelete={eliminarUsuario}
+        onEdit={editarUsuario}
+      />
 
       {showModal && (
         <ModalOverlay>
@@ -167,24 +181,36 @@ const Usuarios = () => {
             </ModalHeader>
             <ModalContent>
               <Form onSubmit={handleSubmit}>
-                {["nombre", "email", "telefono", "pais", "password", "ci"].map((field) => (
-                  <FormGroup key={field}>
-                    <Label>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
-                    <Input
-                      type={field === "email" ? "email" : "text"}
-                      name={field}
-                      value={form[field]}
-                      onChange={handleInputChange}
-                      required={field !== "ci"}
-                    />
-                  </FormGroup>
-                ))}
+                {["nombre", "email", "telefono", "pais", "password", "ci"].map(
+                  (field) => (
+                    <FormGroup key={field}>
+                      <Label>
+                        {field.charAt(0).toUpperCase() + field.slice(1)}
+                      </Label>
+                      <Input
+                        type={field === "email" ? "email" : "text"}
+                        name={field}
+                        value={form[field]}
+                        onChange={handleInputChange}
+                        required={field !== "ci"}
+                      />
+                    </FormGroup>
+                  )
+                )}
 
                 <FormGroup>
                   <Label>Rol</Label>
-                  <Select name="rol" value={form.rol} onChange={handleInputChange} required>
+                  <Select
+                    name="rol"
+                    value={form.rol}
+                    onChange={handleInputChange}
+                    required
+                  >
                     <option value="donante">Donante</option>
                     <option value="voluntario">Voluntario</option>
+                    <option value="medico">Medico</option>
+                    <option value="psicologo">Psicologo</option>
+                    <option value="trabajadorSocial">Trabajador Social</option>
                   </Select>
                 </FormGroup>
 
@@ -348,7 +374,6 @@ const Form = styled.form`
 const FormGroup = styled.div`
   margin-bottom: 15px;
 `;
-
 
 const Label = styled.label`
   display: block;

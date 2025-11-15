@@ -11,7 +11,7 @@ app.get("/paciente", async (req, res) => {
       },
     });
 
-    const pacientesFormateados = pacientes.map(paciente => ({
+    const pacientesFormateados = pacientes.map((paciente) => ({
       id: paciente.id,
       nombre: paciente.nombre,
       apellido: paciente.apellido,
@@ -25,7 +25,8 @@ app.get("/paciente", async (req, res) => {
       padreApellido: paciente.padre.apellido,
       padreTelefono: paciente.padre.telefono,
       padreCi: paciente.padre.ci,
-      padreUbicacion: paciente.padre.ubicacion
+      padreUbicacion: paciente.padre.ubicacion,
+      padreTelefono: paciente.padre.telefono,
     }));
 
     res.json({
@@ -36,7 +37,7 @@ app.get("/paciente", async (req, res) => {
     console.error("Error en GET /paciente:", error);
     res.status(500).json({
       mensaje: "Error al obtener pacientes",
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -111,12 +112,12 @@ app.put("/pacientes/:id", async (req, res) => {
 
     const pacienteExistente = await prisma.paciente.findUnique({
       where: { id: parseInt(id) },
-      include: { padre: true }
+      include: { padre: true },
     });
 
     if (!pacienteExistente) {
       return res.status(404).json({
-        mensaje: "Paciente no encontrado"
+        mensaje: "Paciente no encontrado",
       });
     }
     // 2. Actualizar los datos del padre
@@ -127,8 +128,8 @@ app.put("/pacientes/:id", async (req, res) => {
         apellido: padre.apellido,
         telefono: padre.telefono,
         ci: padre.ci,
-        ubicacion: padre.ubicacion
-      }
+        ubicacion: padre.ubicacion,
+      },
     });
 
     // 3. Actualizar los datos del paciente
@@ -139,38 +140,37 @@ app.put("/pacientes/:id", async (req, res) => {
         apellido: paciente.apellido,
         ciudad: paciente.ciudad,
         tipoCancer: paciente.tipoCancer,
-        edad: parseInt(paciente.edad)
+        edad: parseInt(paciente.edad),
       },
       include: {
-        padre: true
-      }
+        padre: true,
+      },
     });
 
     res.json({
       mensaje: "Paciente y padre actualizados correctamente",
-      data: pacienteActualizado
+      data: pacienteActualizado,
     });
-
   } catch (error) {
     console.error("Error en PUT /pacientes/:id:", error);
-    
+
     if (error.code === "P2002") {
       return res.status(400).json({
         mensaje: "Error de validación",
-        error: "Conflicto con datos únicos (CI duplicado)"
+        error: "Conflicto con datos únicos (CI duplicado)",
       });
     }
 
     if (error.code === "P2025") {
       return res.status(404).json({
         mensaje: "Registro no encontrado",
-        error: error.meta?.cause || "El registro solicitado no existe"
+        error: error.meta?.cause || "El registro solicitado no existe",
       });
     }
 
     res.status(500).json({
       mensaje: "Error interno al actualizar paciente",
-      error: error.message
+      error: error.message,
     });
   }
 });

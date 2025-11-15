@@ -1,0 +1,82 @@
+Date : 2025-08-13 18:33:04
+Directory : c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile
+Total : 41 files,  18418 codes, 154 comments, 426 blanks, all 18998 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          3 |     13,092 |          0 |          3 |     13,095 |
+| TypeScript JSX     |         29 |      5,095 |        132 |        364 |      5,591 |
+| JavaScript         |          2 |         97 |         11 |         16 |        124 |
+| TypeScript         |          5 |         86 |         11 |         22 |        119 |
+| Markdown           |          1 |         31 |          0 |         20 |         51 |
+| JSON with Comments |          1 |         17 |          0 |          1 |         18 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                           | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                              |         41 |     18,418 |        154 |        426 |     18,998 |
+| . (Files)                                                                                                      |          6 |     13,148 |          1 |         26 |     13,175 |
+| app                                                                                                            |         11 |      3,512 |        107 |        290 |      3,909 |
+| app (Files)                                                                                                    |          6 |      2,115 |         71 |        176 |      2,362 |
+| app\(tabs)                                                                                                     |          5 |      1,397 |         36 |        114 |      1,547 |
+| components                                                                                                     |         12 |        481 |         18 |         58 |        557 |
+| components (Files)                                                                                             |          8 |        405 |          4 |         46 |        455 |
+| components\ui                                                                                                  |          4 |         76 |         14 |         12 |        102 |
+| constants                                                                                                      |          1 |         20 |          4 |          3 |         27 |
+| context                                                                                                        |          1 |         40 |          6 |         11 |         57 |
+| hooks                                                                                                          |          4 |         66 |          7 |         19 |         92 |
+| scripts                                                                                                        |          1 |         89 |         10 |         14 |        113 |
+| style                                                                                                          |          5 |      1,062 |          1 |          5 |      1,068 |
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                                       | language           | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\README.md                              | Markdown           |         31 |          0 |         20 |         51 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app.json                               | JSON               |         42 |          0 |          1 |         43 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\(tabs)\_layout.tsx                 | TypeScript JSX     |        109 |          0 |          1 |        110 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\(tabs)\calendario.tsx              | TypeScript JSX     |        407 |         12 |         36 |        455 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\(tabs)\historial.tsx               | TypeScript JSX     |        309 |         11 |         30 |        350 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\(tabs)\index.tsx                   | TypeScript JSX     |        185 |          5 |         17 |        207 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\(tabs)\perfil.tsx                  | TypeScript JSX     |        387 |          8 |         30 |        425 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\_layout.tsx                        | TypeScript JSX     |         24 |          2 |          5 |         31 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\chatbot.tsx                        | TypeScript JSX     |        467 |         13 |         39 |        519 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\configuracion.tsx                  | TypeScript JSX     |        821 |         12 |         56 |        889 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\historial-emocional.tsx            | TypeScript JSX     |        311 |          5 |         17 |        333 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\index.tsx                          | TypeScript JSX     |        130 |          0 |         12 |        142 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\app\notificaciones.tsx                 | TypeScript JSX     |        362 |         39 |         47 |        448 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\Collapsible.tsx             | TypeScript JSX     |         40 |          0 |          6 |         46 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ExternalLink.tsx            | TypeScript JSX     |         20 |          2 |          3 |         25 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\HapticTab.tsx               | TypeScript JSX     |         16 |          1 |          2 |         19 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\HelloWave.tsx               | TypeScript JSX     |         34 |          0 |          7 |         41 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ParallaxScrollView.tsx      | TypeScript JSX     |         76 |          0 |          7 |         83 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ThemedText.tsx              | TypeScript JSX     |         55 |          0 |          6 |         61 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ThemedView.tsx              | TypeScript JSX     |         10 |          0 |          5 |         15 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\chatbot.tsx                 | TypeScript JSX     |        154 |          1 |         10 |        165 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ui\IconSymbol.ios.tsx       | TypeScript JSX     |         31 |          0 |          2 |         33 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ui\IconSymbol.tsx           | TypeScript JSX     |         26 |         11 |          5 |         42 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ui\TabBarBackground.ios.tsx | TypeScript JSX     |         15 |          2 |          3 |         20 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\components\ui\TabBarBackground.tsx     | TypeScript JSX     |          4 |          1 |          2 |          7 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\constants\Colors.ts                    | TypeScript         |         20 |          4 |          3 |         27 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\context\userContext.tsx                | TypeScript JSX     |         40 |          6 |         11 |         57 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\eslint.config.js                       | JavaScript         |          8 |          1 |          2 |         11 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\hooks\useColorScheme.ts                | TypeScript         |          1 |          0 |          1 |          2 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\hooks\useColorScheme.web.ts            | TypeScript         |         13 |          3 |          6 |         22 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\hooks\useThemeColor.ts                 | TypeScript         |         14 |          4 |          4 |         22 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\hooks\userPatientData.ts               | TypeScript         |         38 |          0 |          8 |         46 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\package-lock.json                      | JSON               |     12,999 |          0 |          1 |     13,000 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\package.json                           | JSON               |         51 |          0 |          1 |         52 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\scripts\reset-project.js               | JavaScript         |         89 |         10 |         14 |        113 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\style\styleCalendario.tsx              | TypeScript JSX     |        293 |          0 |          1 |        294 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\style\styleHistoria.tsx                | TypeScript JSX     |        111 |          0 |          1 |        112 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\style\styleIndex.tsx                   | TypeScript JSX     |        295 |          0 |          1 |        296 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\style\styleNotificacion.tsx            | TypeScript JSX     |        192 |          1 |          1 |        194 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\style\stylePerfil.tsx                  | TypeScript JSX     |        171 |          0 |          1 |        172 |
+| c:\Users\Windows 11\Desktop\INTEGRADOOR4\FundacionOncoFeliz-main\mobile\tsconfig.json                          | JSON with Comments |         17 |          0 |          1 |         18 |
+| Total                                                                                                          |                    |     18,418 |        154 |        426 |     18,998 |
++----------------------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

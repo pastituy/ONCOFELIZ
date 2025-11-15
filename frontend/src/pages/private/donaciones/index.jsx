@@ -5,6 +5,7 @@ import { FaRegFilePdf } from "react-icons/fa6";
 import Table from "../../../components/ui/table";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
+import ExportButtons from "../../../components/ui/ExportButtons";
 
 const Donaciones = () => {
   const [donaciones, setDonaciones] = useState([]);
@@ -65,16 +66,13 @@ const Donaciones = () => {
           <h3>Total Donado en el Mes</h3>
           <Total>{totalMes.toFixed(2)} Bs</Total>
         </TotalBox>
-        <Actions>
-          <ButtonExcel onClick={exportToExcel}>
-            <PiMicrosoftExcelLogoFill color="#2ba84a" style={{ fontSize: "1.4rem" }} />
-            Excel
-          </ButtonExcel>
-          <ButtonPDF onClick={exportToPDF}>
-            <FaRegFilePdf color="#f25c54" style={{ fontSize: "1rem" }} />
-            PDF
-          </ButtonPDF>
-        </Actions>
+          <ExportButtons
+            data={donaciones}
+            columns={columns}
+            fileName="donacione"
+            title="Reporte de donaciones"
+            sheetName="Donaciones"
+          />
       </TopSection>
 
       <Table columns={columns} data={donaciones} />
